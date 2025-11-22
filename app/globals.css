@@ -1,0 +1,269 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #F9F8F4;
+  --foreground: #0047BB;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-reach-blue: #0047BB;
+  --color-reach-paper: #F9F8F4;
+
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+body {
+  background-color: var(--background);
+  background-image: url('/bg-paper-light.png');
+  background-repeat: repeat;
+  background-blend-mode: multiply;
+  color: var(--foreground);
+  font-family: var(--font-display);
+}
+
+/* ========================================
+   BLUEPRINT THEME - TECHNICAL DRAWING STYLES
+   ======================================== */
+
+/* --- Cross-Hatching Patterns --- */
+
+/* Single diagonal hatch (45deg) */
+.bg-hatch {
+  background-image: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 2px,
+      currentColor 2px,
+      currentColor 3px);
+  background-size: 6px 6px;
+}
+
+/* Dual cross-hatch pattern (more authentic blueprint fill) */
+.bg-crosshatch {
+  background-image:
+    repeating-linear-gradient(45deg,
+      transparent,
+      transparent 2px,
+      currentColor 2px,
+      currentColor 2.5px),
+    repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 2px,
+      currentColor 2px,
+      currentColor 2.5px);
+  background-size: 6px 6px;
+}
+
+/* Dense cross-hatch for heavy fills */
+.bg-crosshatch-dense {
+  background-image:
+    repeating-linear-gradient(45deg,
+      transparent,
+      transparent 1.5px,
+      currentColor 1.5px,
+      currentColor 2px),
+    repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 1.5px,
+      currentColor 1.5px,
+      currentColor 2px);
+  background-size: 4px 4px;
+}
+
+/* Light cross-hatch for subtle fills */
+.bg-crosshatch-light {
+  background-image:
+    repeating-linear-gradient(45deg,
+      transparent,
+      transparent 3px,
+      currentColor 3px,
+      currentColor 3.5px),
+    repeating-linear-gradient(-45deg,
+      transparent,
+      transparent 3px,
+      currentColor 3px,
+      currentColor 3.5px);
+  background-size: 8px 8px;
+}
+
+/* --- Sketchy/Hand-Drawn Border Effects --- */
+
+/* Enhanced sketchy border with multiple layers */
+.border-sketchy {
+  border: 2px solid currentColor;
+  position: relative;
+}
+
+/* Outer sketchy layer */
+.border-sketchy::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 1px solid currentColor;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* Inner sketchy layer */
+.border-sketchy::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border: 1px solid currentColor;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Double-line technical border */
+.border-double-thick {
+  border-style: double;
+  border-width: 6px;
+}
+
+/* Technical pen style - single solid with offset shadow */
+.border-technical {
+  border: 2px solid currentColor;
+  position: relative;
+  box-shadow:
+    3px 3px 0 0 currentColor,
+    3px 3px 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Construction/Guide Lines --- */
+
+/* Horizontal construction line extending left and right */
+.guide-line-h::before {
+  content: '';
+  position: absolute;
+  left: -100vw;
+  right: -100vw;
+  top: 0;
+  height: 1px;
+  border-top: 1px dashed currentColor;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* Vertical construction line extending top and bottom */
+.guide-line-v::before {
+  content: '';
+  position: absolute;
+  top: -100vh;
+  bottom: -100vh;
+  left: 0;
+  width: 1px;
+  border-left: 1px dashed currentColor;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* Top construction extension */
+.guide-top::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -10px;
+  right: -10px;
+  height: 1px;
+  border-top: 1px dotted currentColor;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Bottom construction extension */
+.guide-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: -10px;
+  right: -10px;
+  height: 1px;
+  border-top: 1px dotted currentColor;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Corner construction marks (L-brackets extending from element) */
+.guide-corners::before,
+.guide-corners::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid currentColor;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.guide-corners::before {
+  top: -8px;
+  left: -8px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.guide-corners::after {
+  bottom: -8px;
+  right: -8px;
+  border-left: none;
+  border-top: none;
+}
+
+/* --- Typography Effects --- */
+
+/* Outlined/hollow text effect for main headings */
+.text-outlined {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--foreground);
+  text-stroke: 2px var(--foreground);
+  paint-order: stroke fill;
+}
+
+/* Outlined text with hatched fill */
+.text-outlined-hatched {
+  position: relative;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--foreground);
+  text-stroke: 2px var(--foreground);
+  background: repeating-linear-gradient(45deg,
+      var(--foreground),
+      var(--foreground) 1px,
+      transparent 1px,
+      transparent 4px);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Stencil effect with gaps */
+.text-stencil {
+  color: var(--foreground);
+  text-shadow:
+    0 1px 0 var(--background),
+    0 -1px 0 var(--background),
+    3px 0 0 rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.05em;
+}
+
+/* Technical annotation style */
+.text-annotation {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  position: relative;
+}
+
+.text-annotation::before {
+  content: '→ ';
+  opacity: 0.5;
+}
