@@ -1,5 +1,9 @@
-import { Twitter as TwitterIcon, Star, MessageSquare, Heart, Repeat, ExternalLink } from "lucide-react"
+"use client"
+
+import { Twitter as TwitterIcon, Star, MessageSquare, Heart, Repeat, ExternalLink, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { usePrivy } from "@privy-io/react-auth"
+import { useEffect, useState } from "react"
 
 const XIcon = ({ className }: { className?: string }) => (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
@@ -18,7 +22,7 @@ const FarcasterIcon = ({ className }: { className?: string }) => (
     </svg>
 )
 
-// Mock data type definition
+// Type definitions
 export interface Interaction {
     id: string
     platform: "twitter" | "farcaster"
@@ -32,53 +36,92 @@ export interface Interaction {
         replies: number
         reposts: number
     }
+    scoreBreakdown?: {
+        communicationQuality: number
+        communityImpact: number
+        consistency: number
+        activeCampaign: number
+    }
 }
 
-// Mock data
-const MOCK_INTERACTIONS: Interaction[] = [
-    {
-        id: "1",
-        platform: "twitter",
-        content: "@spapinwar this is actually insane, the blueprint design is clean 🏗️",
-        timestamp: "2025-03-10T14:22:00Z",
-        score: 150,
-        type: "mention",
-        url: "https://twitter.com/user/status/1",
-        engagement: { likes: 12, replies: 2, reposts: 1 }
-    },
-    {
-        id: "2",
-        platform: "farcaster",
-        content: "Just checked out what @shreyaspapi is building. The attention economy is about to change forever.",
-        timestamp: "2025-03-09T09:15:00Z",
-        score: 300,
-        type: "cast",
-        url: "https://warpcast.com/user/0x123",
-        engagement: { likes: 45, replies: 8, reposts: 12 }
-    },
-    {
-        id: "3",
-        platform: "twitter",
-        content: "Replying to @spapinwar: scale of 1-10 how much coffee did this take?",
-        timestamp: "2025-03-08T18:45:00Z",
-        score: 50,
-        type: "reply",
-        url: "https://twitter.com/user/status/2",
-        engagement: { likes: 3, replies: 1, reposts: 0 }
-    },
-    {
-        id: "4",
-        platform: "farcaster",
-        content: "Frame support when? @shreyaspapi",
-        timestamp: "2025-03-11T11:30:00Z",
-        score: 75,
-        type: "mention",
-        url: "https://warpcast.com/user/0x456",
-        engagement: { likes: 5, replies: 0, reposts: 0 }
-    }
-]
-
 export function EngagementHistory() {
+    const { user } = usePrivy()
+    const [interactions, setInteractions] = useState<Interaction[]>([])
+    const [userStats, setUserStats] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    // Get user's Farcaster FID
+    const farcasterAccount = user?.linkedAccounts?.find(
+        (account: any) => account.type === 'farcaster'
+    ) as any
+
+    const userFid = farcasterAccount?.fid
+
+    useEffect(() => {
+        async function fetchData() {
+            if (!userFid) {
+                setLoading(false)
+                return
+            }
+
+            try {
+                setLoading(true)
+                
+                // Fetch both casts and user stats
+                const [castsResponse, statsResponse] = await Promise.all([
+                    fetch(`/api/dashboard/casts?fid=${userFid}&limit=50`),
+                    fetch(`/api/dashboard/user/${userFid}`)
+                ])
+                
+                if (!castsResponse.ok) {
+                    throw new Error('Failed to fetch casts')
+                }
+
+                const castsData = await castsResponse.json()
+                
+                // Transform database casts to Interaction format
+                const transformedCasts: Interaction[] = castsData.casts.map((cast: any) => ({
+                    id: cast.id,
+                    platform: "farcaster" as const,
+                    content: cast.text,
+                    timestamp: cast.timestamp,
+                    score: Math.round(cast.total_score),
+                    type: cast.parent_hash ? "reply" as const : "cast" as const,
+                    url: `https://warpcast.com/~/conversations/${cast.cast_hash}`,
+                    engagement: {
+                        likes: cast.likes_count || 0,
+                        replies: cast.replies_count || 0,
+                        reposts: cast.recasts_count || 0
+                    },
+                    scoreBreakdown: {
+                        communicationQuality: cast.communication_quality_score,
+                        communityImpact: cast.community_impact_score,
+                        consistency: cast.consistency_score,
+                        activeCampaign: cast.active_campaign_score
+                    }
+                }))
+
+                setInteractions(transformedCasts)
+
+                // Set user stats if available
+                if (statsResponse.ok) {
+                    const statsData = await statsResponse.json()
+                    setUserStats(statsData.stats)
+                }
+
+                setError(null)
+            } catch (err) {
+                console.error('Error fetching data:', err)
+                setError('Failed to load engagement history')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [userFid])
+
     return (
         <div className="space-y-6">
              <div className="flex items-center gap-4 mb-8 relative">
@@ -89,8 +132,78 @@ export function EngagementHistory() {
                 <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
             </div>
 
-            <div className="grid gap-4">
-                {MOCK_INTERACTIONS.map((interaction) => (
+            {loading && (
+                <div className="flex flex-col items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 text-reach-blue animate-spin mb-4" />
+                    <p className="font-mono text-sm uppercase tracking-widest opacity-60">
+                        Loading your engagement history...
+                    </p>
+                </div>
+            )}
+
+            {error && (
+                <div className="bg-red-50 border-2 border-red-200 p-4 text-center">
+                    <p className="font-mono text-sm text-red-600">{error}</p>
+                </div>
+            )}
+
+            {!loading && !error && interactions.length === 0 && (
+                <div className="bg-white/50 backdrop-blur-sm p-12 border-sketchy text-center">
+                    <p className="font-mono text-sm uppercase tracking-widest opacity-60 mb-2">
+                        No engagement history yet
+                    </p>
+                    <p className="font-mono text-xs opacity-40">
+                        Start engaging with @shreyaspapi to see your casts here!
+                    </p>
+                </div>
+            )}
+
+            {/* User Stats Summary */}
+            {!loading && !error && userStats && interactions.length > 0 && (
+                <div className="bg-white/50 backdrop-blur-sm p-6 border-sketchy relative mb-6">
+                    <div className="absolute top-0 left-0 bg-reach-blue text-reach-paper px-3 py-1 font-mono text-xs font-bold uppercase bg-crosshatch">
+                        <span className="bg-reach-blue px-1 relative">Your Stats</span>
+                    </div>
+                    <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="text-center">
+                            <div className="font-display text-3xl text-reach-blue font-bold">
+                                {userStats.total_casts || 0}
+                            </div>
+                            <div className="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-1">
+                                Total Casts
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <div className="font-display text-3xl text-reach-blue font-bold">
+                                {userStats.average_score ? userStats.average_score.toFixed(1) : '0.0'}
+                            </div>
+                            <div className="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-1">
+                                Avg Score
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <div className="font-display text-3xl text-reach-blue font-bold">
+                                {userStats.highest_score ? userStats.highest_score.toFixed(0) : '0'}
+                            </div>
+                            <div className="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-1">
+                                Best Score
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <div className="font-display text-3xl text-reach-blue font-bold">
+                                {userStats.total_score ? Math.round(userStats.total_score) : '0'}
+                            </div>
+                            <div className="font-mono text-[10px] uppercase tracking-widest opacity-60 mt-1">
+                                Total Points
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {!loading && !error && interactions.length > 0 && (
+                <div className="grid gap-4">
+                    {interactions.map((interaction) => (
                     <div 
                         key={interaction.id}
                         className="bg-white/50 backdrop-blur-sm p-4 border-sketchy relative group hover:bg-white/80 transition-all"
@@ -166,15 +279,19 @@ export function EngagementHistory() {
                         <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-reach-blue/20"></div>
                         <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-reach-blue/20"></div>
                     </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
-             {/* Empty State / Loading visual */}
-             <div className="mt-4 pt-4 border-t border-reach-blue/10 text-center">
-                <p className="font-mono text-[10px] uppercase tracking-widest opacity-50 animate-pulse">
-                    Scanning network for new signals...
-                </p>
-            </div>
+            {/* Stats Footer */}
+            {!loading && !error && interactions.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-reach-blue/10 text-center">
+                    <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">
+                        Showing {interactions.length} engagement{interactions.length !== 1 ? 's' : ''} • 
+                        Total Score: {interactions.reduce((sum, i) => sum + i.score, 0)} points
+                    </p>
+                </div>
+            )}
         </div>
     )
 }

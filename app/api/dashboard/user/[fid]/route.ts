@@ -3,10 +3,11 @@ import { getUserDashboardData } from '@/lib/database';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { fid: string } }
+    { params }: { params: Promise<{ fid: string }> }
 ) {
     try {
-        const fid = parseInt(params.fid);
+        const { fid: fidString } = await params;
+        const fid = parseInt(fidString);
 
         if (isNaN(fid)) {
             return NextResponse.json(
