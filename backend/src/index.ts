@@ -1,90 +1,119 @@
-import WebSocket from 'ws';
+import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import { PrivyClient } from '@privy-io/server-auth';
 
 // Load environment variables from .env file
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY;
-// Neynar WebSocket URL - check docs for latest endpoint
-// Often it is wss://api.neynar.com/v2/farcaster/cast or similar for specific streams
-const WS_URL = 'wss://api.neynar.com/v2/farcaster/cast'; 
+const PRIVY_APP_ID = process.env.PRIVY_APP_ID;
+const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET;
+const PORT = process.env.PORT || 8080; // Azure uses PORT 8080 by default
 
-if (!NEYNAR_API_KEY) {
-    console.error('NEYNAR_API_KEY is missing in .env file');
+if (!PRIVY_APP_ID || !PRIVY_APP_SECRET) {
+    console.error('PRIVY_APP_ID or PRIVY_APP_SECRET is missing in .env file');
     process.exit(1);
 }
 
-// Mock storage for connected users (FIDs)
-// In a real application, this would be a database query or shared Redis store
+const privy = new PrivyClient(PRIVY_APP_ID, PRIVY_APP_SECRET);
+const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Storage for connected users (FIDs)
 const connectedUserFids = new Set<number>();
 
-// Add some mock FIDs for testing
-connectedUserFids.add(1); // warpcast
-connectedUserFids.add(2); // vitalik.eth
-connectedUserFids.add(3); // dwr.eth
-connectedUserFids.add(6833); // Example FID
+async function syncUsers() {
+    try {
+        console.log('Syncing users from Privy...');
+        const users = await privy.getUsers();
+        
+        const newFids = new Set<number>();
 
-console.log(`Tracking ${connectedUserFids.size} connected users...`);
+        for (const user of users) {
+            const farcasterAccount = user.linkedAccounts.find(
+                (account): account is any => account.type === 'farcaster'
+            );
 
-function connect() {
-    console.log(`Connecting to ${WS_URL}...`);
-    const ws = new WebSocket(WS_URL, {
-        headers: {
-            'x-api-key': NEYNAR_API_KEY
-        }
-    });
-
-    ws.on('open', () => {
-        console.log('✅ Connected to Neynar WebSocket');
-        // Some endpoints require a subscription message. 
-        // If this is a firehose, it might just start streaming.
-        // If it's a filter, we might need to send a JSON payload here.
-    });
-
-    ws.on('message', (data: WebSocket.Data) => {
-        try {
-            const messageString = data.toString();
-            const message = JSON.parse(messageString);
-            
-            // Filter for 'cast.created' events
-            // The structure depends on the specific Neynar stream
-            if (message.type === 'cast.created' && message.data) {
-                const cast = message.data;
-                const authorFid = cast.author?.fid;
-                
-                // Check if the cast is from a connected user
-                if (authorFid && connectedUserFids.has(authorFid)) {
-                    console.log('\n---------------------------------------------------');
-                    console.log(`🔔 CAST DETECTED from Connected User (FID: ${authorFid})`);
-                    console.log(`User: @${cast.author.username}`);
-                    console.log(`Text: ${cast.text}`);
-                    console.log(`Hash: ${cast.hash}`);
-                    console.log('---------------------------------------------------');
-                    
-                    // TODO: Implement reward logic here
-                    // e.g., await addPoints(authorFid, 10);
-                }
-            } else if (message.type === 'heartbeat') {
-                // Ignore heartbeats
-            } else {
-                 // Log other messages for debugging (optional)
-                 // console.log('Received:', message.type);
+            if (farcasterAccount && farcasterAccount.fid) {
+                newFids.add(farcasterAccount.fid);
             }
-
-        } catch (err) {
-            console.error('Error processing message:', err);
         }
-    });
 
-    ws.on('error', (err) => {
-        console.error('❌ WebSocket error:', err);
-    });
-
-    ws.on('close', (code, reason) => {
-        console.log(`WebSocket connection closed (Code: ${code}, Reason: ${reason}). Reconnecting in 5s...`);
-        setTimeout(connect, 5000);
-    });
+        // Update the global set
+        connectedUserFids.clear();
+        newFids.forEach(fid => connectedUserFids.add(fid));
+        
+        console.log(`✅ Synced ${connectedUserFids.size} connected Farcaster users.`);
+        console.log(`   Tracking FIDs: ${Array.from(connectedUserFids).join(', ')}`);
+        
+    } catch (error) {
+        console.error('Error syncing users from Privy:', error);
+    }
 }
 
-connect();
+// Webhook endpoint for Neynar events
+app.post('/webhooks/neynar', async (req: Request, res: Response) => {
+    try {
+        const event = req.body;
+        
+        // Acknowledge receipt immediately
+        res.status(200).send('OK');
+
+        // Process the event
+        if (event.type === 'cast.created' && event.data) {
+            const cast = event.data;
+            const authorFid = cast.author?.fid;
+            
+            if (authorFid && connectedUserFids.has(authorFid)) {
+                console.log('\n---------------------------------------------------');
+                console.log(`🔔 CAST DETECTED from Connected User (FID: ${authorFid})`);
+                console.log(`User: @${cast.author.username}`);
+                console.log(`Text: ${cast.text}`);
+                console.log(`Hash: ${cast.hash}`);
+                console.log(`Timestamp: ${cast.timestamp}`);
+                console.log('---------------------------------------------------');
+                
+                // TODO: Implement reward logic here
+                // e.g., calculate score, update database, trigger Superfluid stream
+            }
+        }
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+    }
+});
+
+// Health check endpoint
+app.get('/health', (req: Request, res: Response) => {
+    res.json({ 
+        status: 'ok', 
+        connectedUsers: connectedUserFids.size,
+        fids: Array.from(connectedUserFids)
+    });
+});
+
+// Root endpoint
+app.get('/', (req: Request, res: Response) => {
+    res.json({
+        service: 'Reach Backend',
+        status: 'running',
+        endpoints: {
+            health: '/health',
+            webhook: '/webhooks/neynar'
+        }
+    });
+});
+
+// Initial sync
+syncUsers();
+
+// Sync every 5 minutes
+setInterval(syncUsers, 5 * 60 * 1000);
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`\n🚀 Reach Backend Server running on port ${PORT}`);
+    console.log(`📡 Webhook endpoint: http://localhost:${PORT}/webhooks/neynar`);
+    console.log(`💚 Health check: http://localhost:${PORT}/health\n`);
+});

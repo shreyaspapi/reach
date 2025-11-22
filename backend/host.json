@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "logging": {
+    "fileLoggingMode": "always",
+    "logLevel": {
+      "Function": "Information",
+      "default": "Information"
+    }
+  }
+}
+
