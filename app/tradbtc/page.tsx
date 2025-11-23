@@ -97,7 +97,7 @@ export default function TradBTCPage() {
                 </div>
             </header>
 
-            <main className="flex-1 flex flex-col p-4 md:p-8 pt-24">
+            <main className="flex-1 flex flex-col p-4 md:p-8 pt-32">
 
                 {/* Title Section */}
                 <div className="max-w-4xl mx-auto w-full mb-12 relative">

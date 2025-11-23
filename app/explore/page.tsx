@@ -58,7 +58,7 @@ export default function ExplorePage() {
                 </div>
             </header>
 
-            <main className="flex-1 flex flex-col p-4 md:p-8 pt-24">
+            <main className="flex-1 flex flex-col p-4 md:p-8 pt-32">
                 {/* Title Section */}
                 <div className="max-w-4xl mx-auto w-full mb-12 relative">
                     <div className="absolute -left-4 top-0 bottom-0 w-1 bg-reach-blue opacity-20"></div>
