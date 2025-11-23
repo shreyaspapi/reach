@@ -14,7 +14,7 @@ import { useEffect, useState } from "react"
 export default function DashboardPage() {
     const { logout, authenticated, ready } = usePrivy()
     const router = useRouter()
-    const [activeTab, setActiveTab] = useState<"overview" | "history">("overview")
+    const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
 
     useEffect(() => {
         if (ready && !authenticated) {
@@ -34,27 +34,27 @@ export default function DashboardPage() {
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 p-4 md:p-8 flex justify-between items-start pointer-events-none">
                 <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative">
-                    <h1 className="font-display text-2xl md:text-3xl text-reach-blue uppercase leading-none font-extrabold">Reach</h1>
+                    <h1 className="font-display text-2xl md:text-3xl text-reach-blue leading-none font-extrabold">Reach</h1>
                     <p className="font-mono text-[10px] font-bold uppercase tracking-widest mt-1">
-                        Personal Ledger • <span className="bg-reach-blue text-reach-paper px-1 bg-crosshatch relative"><span className="bg-reach-blue px-1 relative">LIVE</span></span>
+                        Personal Ledger • <span className="bg-reach-blue text-reach-paper px-1 bg-crosshatch relative"><span className="bg-reach-blue px-1 relative">Live</span></span>
                     </p>
                 </div>
 
                 <div className="flex items-start gap-4 pointer-events-auto">
-                    <Link 
+                    <Link
                         href="/explore"
                         className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer flex items-center gap-2"
                     >
                         <Globe className="w-5 h-5" />
-                        <span className="font-mono text-xs font-bold uppercase hidden md:inline">Explore</span>
+                        <span className="font-mono text-xs font-bold hidden md:inline">Explore</span>
                     </Link>
 
-                    <Link 
+                    <Link
                         href="/tradbtc"
                         className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer flex items-center gap-2"
                     >
                         <Wallet className="w-5 h-5" />
-                        <span className="font-mono text-xs font-bold uppercase hidden md:inline">TradBTC</span>
+                        <span className="font-mono text-xs font-bold hidden md:inline">TradBTC</span>
                     </Link>
 
                     <button
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                             </div>
 
                             <div className="mt-8 text-center">
-                                <p className="font-mono text-sm uppercase tracking-widest mb-4 opacity-70">Current Flow Rate</p>
+                                <p className="font-mono text-sm tracking-widest mb-4 opacity-70">Current Flow Rate</p>
                                 <div className="scale-125 origin-center py-8">
                                     <StreamCounter />
                                 </div>
@@ -108,27 +108,25 @@ export default function DashboardPage() {
 
                 {/* Section 2: Allocations & Campaigns */}
                 <section className="min-h-screen bg-reach-blue/5 p-4 md:p-8 pt-24 space-y-8">
-                    
+
                     {/* Tab Navigation */}
                     <div className="max-w-4xl mx-auto mb-8">
-                         <div className="flex border-b border-reach-blue/20">
+                        <div className="flex border-b border-reach-blue/20">
                             <button
                                 onClick={() => setActiveTab("overview")}
-                                className={`px-6 py-3 font-mono uppercase text-sm tracking-widest border-b-2 transition-colors ${
-                                    activeTab === "overview" 
-                                        ? "border-reach-blue text-reach-blue font-bold bg-reach-blue/5" 
-                                        : "border-transparent text-reach-blue/50 hover:text-reach-blue/80"
-                                }`}
+                                className={`px-6 py-3 font-mono text-sm tracking-widest border-b-2 transition-colors ${activeTab === "overview"
+                                    ? "border-reach-blue text-reach-blue font-bold bg-reach-blue/5"
+                                    : "border-transparent text-reach-blue/50 hover:text-reach-blue/80"
+                                    }`}
                             >
                                 Overview
                             </button>
                             <button
                                 onClick={() => setActiveTab("history")}
-                                className={`px-6 py-3 font-mono uppercase text-sm tracking-widest border-b-2 transition-colors ${
-                                    activeTab === "history" 
-                                        ? "border-reach-blue text-reach-blue font-bold bg-reach-blue/5" 
-                                        : "border-transparent text-reach-blue/50 hover:text-reach-blue/80"
-                                }`}
+                                className={`px-6 py-3 font-mono uppercase text-sm tracking-widest border-b-2 transition-colors ${activeTab === "history"
+                                    ? "border-reach-blue text-reach-blue font-bold bg-reach-blue/5"
+                                    : "border-transparent text-reach-blue/50 hover:text-reach-blue/80"
+                                    }`}
                             >
                                 Engagement History
                             </button>
@@ -143,19 +141,19 @@ export default function DashboardPage() {
                                     {/* Extended construction guide line */}
                                     <div className="absolute left-0 right-0 h-px border-t border-dashed border-reach-blue/25 -mx-12"></div>
                                     <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                    <h2 className="font-display text-3xl uppercase text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Identity</h2>
+                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Identity</h2>
                                     <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
                                 </div>
                                 <ConnectedAccounts />
                             </div>
-        
+
                             {/* Allocations */}
                             <div className="max-w-4xl mx-auto mt-16">
                                 <div className="flex items-center gap-4 mb-8 relative">
                                     {/* Extended construction guide line */}
                                     <div className="absolute left-0 right-0 h-px border-t border-dashed border-reach-blue/25 -mx-12"></div>
                                     <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                    <h2 className="font-display text-3xl uppercase text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Allocations</h2>
+                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Allocations</h2>
                                     <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
                                 </div>
                                 <div className="bg-white/50 backdrop-blur-sm p-6 border-sketchy relative guide-corners">
@@ -165,17 +163,60 @@ export default function DashboardPage() {
                                     </div>
                                 </div>
                             </div>
-        
+
+                            {/* DeFi Opportunities */}
+                            <div className="max-w-4xl mx-auto mt-16">
+                                <div className="flex items-center gap-4 mb-8 relative">
+                                    {/* Extended construction guide line */}
+                                    <div className="absolute left-0 right-0 h-px border-t border-dashed border-reach-blue/25 -mx-12"></div>
+                                    <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
+                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">DeFi Vaults</h2>
+                                    <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
+                                </div>
+
+                                <Link href="/tradbtc" className="block group">
+                                    <div className="bg-reach-blue text-reach-paper p-8 border-double-thick border-reach-blue relative overflow-hidden transition-transform hover:-translate-y-1">
+                                        {/* Background Pattern */}
+                                        <div className="absolute inset-0 bg-crosshatch opacity-10"></div>
+
+                                        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                                            <div>
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <h3 className="font-display text-2xl font-bold">TradBTC Alpha</h3>
+                                                    <span className="bg-reach-paper text-reach-blue px-2 py-0.5 text-[10px] font-mono font-bold">New</span>
+                                                </div>
+                                                <p className="font-mono text-sm opacity-80 max-w-lg">
+                                                    Institutional Bitcoin yields powered by Babylon & MSTR.
+                                                    <br />
+                                                    <span className="text-yellow-300 font-bold">Social Boost Active:</span> Your engagement score unlocks <span className="underline decoration-wavy">Bonus APY</span>.
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-4">
+                                                <div className="text-right">
+                                                    <p className="font-mono text-[10px] uppercase opacity-60">Current APY</p>
+                                                    <p className="font-display text-3xl font-bold">12.4%</p>
+                                                </div>
+                                                <div className="h-10 w-px bg-reach-paper/20"></div>
+                                                <div className="bg-reach-paper text-reach-blue px-4 py-2 font-mono text-sm font-bold hover:bg-white transition-colors">
+                                                    Deposit BTC
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </div>
+
                             {/* Campaigns */}
                             <div className="max-w-4xl mx-auto pb-24 mt-16">
                                 <div className="flex items-center gap-4 mb-8 relative">
                                     {/* Extended construction guide line */}
                                     <div className="absolute left-0 right-0 h-px border-t border-dashed border-reach-blue/25 -mx-12"></div>
                                     <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                    <h2 className="font-display text-3xl uppercase text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Active Campaigns</h2>
+                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Active Campaigns</h2>
                                     <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
                                 </div>
-        
+
                                 <div className="grid grid-cols-1 gap-6">
                                     <CampaignCard
                                         title="Talk to Shreyas"

@@ -67,11 +67,15 @@ export default function LoginPage() {
         {/* CTA */}
         <div className="space-y-4">
           <div className="font-mono text-sm md:text-base max-w-md mx-auto leading-relaxed">
-            ACCESS YOUR STREAM. TRACK YOUR POINTS.
+            The SocialFi Layer for the New Internet.
+            <br />
+            <span className="opacity-70">Where attention meets DeFi yield.</span>
             {/* Hatched badge for important text */}
-            <span className="bg-reach-blue text-reach-paper px-2 bg-crosshatch inline-block relative ml-2">
-              <span className="relative bg-reach-blue px-1">IDENTITY VERIFICATION REQUIRED.</span>
-            </span>
+            <div className="mt-4">
+              <span className="bg-reach-blue text-reach-paper px-2 bg-crosshatch inline-block relative">
+                <span className="relative bg-reach-blue px-1 font-bold">Identity Verification Required</span>
+              </span>
+            </div>
           </div>
 
           {/* Button with sketchy borders and construction lines */}
@@ -83,8 +87,8 @@ export default function LoginPage() {
 
             <div className="relative flex items-center gap-3">
               <TwitterIcon className="w-5 h-5 text-reach-blue group-hover:text-reach-paper transition-colors" />
-              <span className="font-mono font-bold text-lg uppercase text-reach-blue group-hover:text-reach-paper transition-colors">
-               Connect
+              <span className="font-mono font-bold text-lg text-reach-blue group-hover:text-reach-paper transition-colors">
+                Connect
               </span>
             </div>
           </button>

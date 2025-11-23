@@ -18,11 +18,11 @@ contract Deploy is Script {
         // Default to Base for hackathon submission, or override via constructor arg
         // NOTE: The hex address below had a typo in original (missing '0x' or weird casing causing issues). 
         // Ensuring it is a valid checksummed address literal.
-        address pyth = address(0x8250eD45825D8F3a8E1b0e9b4D9E8E5bC4A6B2); 
+        address pyth = address(0xDd24F84d36BF92C65F92307595335bdFab5Bbd21); 
 
         MSTRNavOracle oracle = new MSTRNavOracle(pyth);
 
-        oracle.setParameters(649_870, 315_393_000, 8_244_000_000);
+        oracle.setParameters(649_870, 315_393_000, 8_244_000_000, "Initial Deploy");
 
         vm.stopBroadcast();
     }

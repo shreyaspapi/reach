@@ -9,13 +9,13 @@ contract MSTRNavOracle is Ownable {
     IPyth public immutable pyth;
 
     bytes32 public constant BTC_FEED  = 0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43;
-    bytes32 public constant MSTR_FEED = 0x0d0f4e8f931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace; // Live Equity.MSTR.US
+    bytes32 public constant MSTR_FEED = 0xe1e80251e5f5184f2195008382538e847fafc36f751896889dd3d1b1f6111f09; // Live Equity.MSTR.US
 
     uint256 public btcHoldings    = 649_870;
     uint256 public dilutedShares   = 315_393_000;
     uint256 public netDebtUsd     = 8_244_000_000;
 
-    event ParametersUpdated(uint256 btcHoldings, uint256 dilutedShares, uint256 netDebtUsd);
+    event ParametersFetchedFromApi(uint256 btcHoldings, uint256 dilutedShares, uint256 netDebtUsd, string source);
     event NavUpdated(uint256 navPerShareUsd, uint256 mnavMultiple, uint64 btcPublishTime, uint64 mstrPublishTime);
 
     constructor(address _pyth) Ownable(msg.sender) {
@@ -32,8 +32,9 @@ contract MSTRNavOracle is Ownable {
         uint64 btcPublishTime,
         uint64 mstrPublishTime
     ) {
-        PythStructs.Price memory btc  = pyth.getPriceNoOlderThan(BTC_FEED, 600);
-        PythStructs.Price memory mstr = pyth.getPriceNoOlderThan(MSTR_FEED, 600);
+        // Allow up to 1 week (604800s) of staleness for weekend demos
+        PythStructs.Price memory btc  = pyth.getPriceNoOlderThan(BTC_FEED, 604800);
+        PythStructs.Price memory mstr = pyth.getPriceNoOlderThan(MSTR_FEED, 604800);
 
         int256 btcPriceRaw  = btc.price;
         int256 mstrPriceRaw = mstr.price;
@@ -47,6 +48,10 @@ contract MSTRNavOracle is Ownable {
         uint256 navTotal = btcTreasuryValue > netDebtUsd * 1e8 ? btcTreasuryValue - netDebtUsd * 1e8 : 0;
         navPerShareUsd = navTotal / dilutedShares; // USD per share with 8 decimals
 
+        if (navPerShareUsd > 0) {
+            mnavMultiple = (mstrPrice * 100) / navPerShareUsd; // 2 decimals (e.g. 208 = 2.08x)
+        }
+
         // Assumptions:
         // - btc.price is int64, we cast to int256 then uint256.
         // - publishTime is uint64.
@@ -59,11 +64,15 @@ contract MSTRNavOracle is Ownable {
         return (navPerShareUsd, mnavMultiple, btcPublishTime, mstrPublishTime);
     }
 
-    function setParameters(uint256 _btcHoldings, uint256 _dilutedShares, uint256 _netDebtUsd) external onlyOwner {
-        btcHoldings  = _btcHoldings;
+    function setParameters(uint256 _btcHoldings, uint256 _dilutedShares, uint256 _netDebtUsd, string calldata _source) external onlyOwner {  // Or use roles for relayer
+        // Optional: Sanity check (e.g., BTC can't drop >10k overnight)
+        require(_btcHoldings >= btcHoldings * 95 / 100 && _btcHoldings <= btcHoldings * 200 / 100, "Invalid BTC delta");
+        require(_dilutedShares >= dilutedShares * 90 / 100, "Invalid shares drop");
+        
+        btcHoldings = _btcHoldings;
         dilutedShares = _dilutedShares;
-        netDebtUsd   = _netDebtUsd;
-        emit ParametersUpdated(_btcHoldings, _dilutedShares, _netDebtUsd);
+        netDebtUsd = _netDebtUsd;
+        emit ParametersFetchedFromApi(_btcHoldings, _dilutedShares, _netDebtUsd, _source);
     }
 }
 

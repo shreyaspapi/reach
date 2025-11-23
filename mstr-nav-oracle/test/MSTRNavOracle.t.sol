@@ -20,7 +20,7 @@ contract MSTRNavOracleTest is Test {
 
     function testParameters() public {
         oracle = new MSTRNavOracle(address(0x1)); // Dummy pyth
-        oracle.setParameters(100, 200, 300);
+        oracle.setParameters(100, 200, 300, "Test Source");
         assertEq(oracle.btcHoldings(), 100);
     }
 }

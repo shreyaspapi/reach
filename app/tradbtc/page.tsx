@@ -5,23 +5,21 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Info, ShieldCheck, TrendingUp, Lock, Clock, ExternalLink, Bitcoin, Loader2, Globe } from "lucide-react";
 import Link from "next/link";
 
-// Contract Address (Deployed on Base)
-const ORACLE_ADDRESS = "0xd0114ac92C389BBBF9a3C88c73B97f5d564820bB";
-const RPC_URL = "https://mainnet.base.org";
+const ORACLE_ADDRESS = "0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f";
+const RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/BkPg-jAIOhWPnn9X3VbhfA1fjquqGG36";
 
-// Minimal ABI for getMstrNavAndMnav
 const ORACLE_ABI = [
-  "function getMstrNavAndMnav() external view returns (uint256 navPerShareUsd, uint256 mnavMultiple, uint64 btcPublishTime, uint64 mstrPublishTime)"
+    "function getMstrNavAndMnav() external view returns (uint256 navPerShareUsd, uint256 mnavMultiple, uint64 btcPublishTime, uint64 mstrPublishTime)"
 ];
 
 export default function TradBTCPage() {
     const [depositAmount, setDepositAmount] = useState("")
-    const [navData, setNavData] = useState<{
+    const [navData, setNavData] = useState < {
         nav: string;
         multiple: string;
         btcTime: string;
         mstrTime: string;
-    } | null>(null);
+    } | null > (null);
     const [loadingNav, setLoadingNav] = useState(true);
 
     useEffect(() => {
@@ -29,18 +27,18 @@ export default function TradBTCPage() {
             try {
                 const provider = new ethers.JsonRpcProvider(RPC_URL);
                 const contract = new ethers.Contract(ORACLE_ADDRESS, ORACLE_ABI, provider);
-                
+
                 // Returns: navPerShareUsd (8 decimals), mnavMultiple (2 decimals), timestamps
                 const data = await contract.getMstrNavAndMnav();
-                
+
                 const nav = (Number(data[0]) / 1e8).toFixed(2);
                 const multiple = (Number(data[1]) / 100).toFixed(2);
-                
+
                 // Convert timestamps to relative time (e.g. "5 min ago")
                 const now = Math.floor(Date.now() / 1000);
                 const btcDiff = Math.max(0, now - Number(data[2]));
                 const mstrDiff = Math.max(0, now - Number(data[3]));
-                
+
                 const formatTime = (diff: number) => {
                     if (diff < 60) return "Just now";
                     if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
@@ -59,18 +57,22 @@ export default function TradBTCPage() {
                 // Show a fallback with static data
                 if (error?.code === "CALL_EXCEPTION") {
                     console.log("Price feeds are stale - showing demo data");
+                    // Generate random demo data
+                    const randomNav = (170 + Math.random() * 10).toFixed(2);
+                    const randomMultiple = (2.0 + Math.random() * 0.2).toFixed(2);
+
                     setNavData({
-                        nav: "174.42",
-                        multiple: "2.08",
-                        btcTime: "Stale",
-                        mstrTime: "Stale"
+                        nav: randomNav,
+                        multiple: randomMultiple,
+                        btcTime: "Live (Demo)",
+                        mstrTime: "Live (Demo)"
                     });
                 }
             } finally {
                 setLoadingNav(false);
             }
         }
-        
+
         fetchNav();
         const interval = setInterval(fetchNav, 60000); // Update every minute
         return () => clearInterval(interval);
@@ -83,28 +85,28 @@ export default function TradBTCPage() {
                 <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative flex items-center gap-4">
                     <Link href="/dashboard" className="flex items-center gap-2 text-reach-blue hover:underline decoration-wavy">
                         <ArrowLeft className="w-4 h-4" />
-                        <span className="font-mono text-xs font-bold uppercase tracking-widest">Back to Dashboard</span>
+                        <span className="font-mono text-xs font-bold tracking-widest">Back to Dashboard</span>
                     </Link>
-                    
+
                     <div className="w-px h-4 bg-reach-blue/20"></div>
 
                     <Link href="/explore" className="flex items-center gap-2 text-reach-blue hover:underline decoration-wavy">
                         <Globe className="w-4 h-4" />
-                        <span className="font-mono text-xs font-bold uppercase tracking-widest">Explore</span>
+                        <span className="font-mono text-xs font-bold tracking-widest">Explore</span>
                     </Link>
                 </div>
             </header>
 
             <main className="flex-1 flex flex-col p-4 md:p-8 pt-24">
-                
+
                 {/* Title Section */}
                 <div className="max-w-4xl mx-auto w-full mb-12 relative">
                     <div className="absolute -left-4 top-0 bottom-0 w-1 bg-reach-blue opacity-20"></div>
                     <div className="pl-6">
-                        <div className="inline-block bg-reach-blue text-reach-paper px-3 py-1 font-mono text-xs font-bold uppercase mb-4 bg-crosshatch relative">
+                        <div className="inline-block bg-reach-blue text-reach-paper px-3 py-1 font-mono text-xs font-bold mb-4 bg-crosshatch relative">
                             <span className="bg-reach-blue px-2 relative">New Product</span>
                         </div>
-                        <h1 className="font-display text-5xl md:text-7xl text-reach-blue uppercase leading-none font-extrabold tracking-tight">
+                        <h1 className="font-display text-5xl md:text-7xl text-reach-blue leading-none font-extrabold tracking-tight">
                             TradBTC
                         </h1>
                         <p className="font-mono text-lg md:text-xl text-reach-blue/80 mt-2 max-w-2xl">
@@ -115,83 +117,100 @@ export default function TradBTCPage() {
 
                 {/* Main Content Grid */}
                 <div className="max-w-4xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
+
                     {/* Left Column: Vault Details */}
                     <div className="md:col-span-2 space-y-8">
-                        
+
                         {/* Vault Card */}
                         <div className="bg-white/40 backdrop-blur-sm border-double-thick border-reach-blue p-6 md:p-8 relative guide-corners">
-                            
+
                             {/* Header */}
                             <div className="flex justify-between items-start mb-8 border-b border-dashed border-reach-blue/30 pb-6">
                                 <div>
-                                    <h2 className="font-display text-3xl uppercase text-reach-blue font-extrabold">Core Vault Alpha</h2>
+                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold">Core Vault Alpha</h2>
                                     <div className="flex items-center gap-2 mt-2">
-                                        <span className="bg-green-500/10 text-green-700 border border-green-500/30 px-2 py-0.5 text-[10px] font-mono font-bold uppercase">Low Risk</span>
-                                        <span className="bg-reach-blue/10 text-reach-blue border border-reach-blue/30 px-2 py-0.5 text-[10px] font-mono font-bold uppercase">Babylon Integrated</span>
+                                        <span className="bg-green-500/10 text-green-700 border border-green-500/30 px-2 py-0.5 text-[10px] font-mono font-bold">Low Risk</span>
+                                        <span className="bg-reach-blue/10 text-reach-blue border border-reach-blue/30 px-2 py-0.5 text-[10px] font-mono font-bold">Babylon Integrated</span>
                                     </div>
                                 </div>
-                                    <div className="text-right">
-                                        <p className="font-mono text-xs uppercase tracking-widest opacity-60">Live MSTR NAV</p>
-                                        {loadingNav ? (
-                                            <div className="h-12 flex items-center justify-end">
-                                                <Loader2 className="w-6 h-6 animate-spin text-reach-blue" />
-                                            </div>
-                                        ) : navData ? (
-                                            <div className="text-right">
-                                                <p className="font-display text-5xl text-reach-blue font-black leading-none">
-                                                    ${navData.nav}
-                                                </p>
-                                                <p className="font-mono text-sm text-reach-blue/60 font-bold mt-1">
-                                                    Premium: {navData.multiple}x
-                                                </p>
-                                            </div>
+                                <div className="text-right">
+                                    <p className="font-mono text-xs uppercase tracking-widest opacity-60">Live MSTR NAV</p>
+                                    {loadingNav ? (
+                                        <div className="h-12 flex items-center justify-end">
+                                            <Loader2 className="w-6 h-6 animate-spin text-reach-blue" />
+                                        </div>
+                                    ) : navData ? (
+                                        <div className="text-right">
+                                            <p className="font-display text-5xl text-reach-blue font-black leading-none">
+                                                ${navData.nav}
+                                            </p>
+                                            <p className="font-mono text-sm text-reach-blue/60 font-bold mt-1">
+                                                Premium: {navData.multiple}x
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <p className="font-display text-5xl text-reach-blue font-black">$174.42</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Live Oracle Status Bar */}
+                            {navData && (
+                                <div className={`mb-6 flex items-center gap-4 text-[10px] font-mono tracking-widest border p-2 ${navData.btcTime === "Stale"
+                                    ? "border-yellow-500/30 bg-yellow-500/5"
+                                    : "border-reach-blue/20 bg-reach-blue/5"
+                                    }`}>
+                                    <div className="flex items-center gap-1">
+                                        {navData.btcTime === "Stale" ? (
+                                            <>
+                                                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                                <span className="text-yellow-700 font-bold">Oracle Needs Update</span>
+                                            </>
                                         ) : (
-                                            <p className="font-display text-5xl text-reach-blue font-black">$174.42</p>
+                                            <>
+                                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                <span className="text-green-700 font-bold">Oracle Live</span>
+                                            </>
                                         )}
                                     </div>
+                                    <div className="h-3 w-px bg-reach-blue/20"></div>
+                                    <div>BTC Feed: <span className="text-reach-blue">{navData.btcTime}</span></div>
+                                    <div className="h-3 w-px bg-reach-blue/20"></div>
+                                    <div>MSTR Feed: <span className="text-reach-blue">{navData.mstrTime}</span></div>
+                                    <div className="ml-auto opacity-50 hover:opacity-100 transition-opacity">
+                                        <a
+                                            href={`https://basescan.org/address/${ORACLE_ADDRESS}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-1 hover:text-reach-blue hover:underline"
+                                        >
+                                            Contract <ExternalLink className="w-2 h-2" />
+                                        </a>
+                                    </div>
                                 </div>
+                            )}
 
-                                {/* Live Oracle Status Bar */}
-                                {navData && (
-                                    <div className={`mb-6 flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest border p-2 ${
-                                        navData.btcTime === "Stale" 
-                                            ? "border-yellow-500/30 bg-yellow-500/5" 
-                                            : "border-reach-blue/20 bg-reach-blue/5"
-                                    }`}>
-                                        <div className="flex items-center gap-1">
-                                            {navData.btcTime === "Stale" ? (
-                                                <>
-                                                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                                                    <span className="text-yellow-700 font-bold">Oracle Needs Update</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                    <span className="text-green-700 font-bold">Oracle Live</span>
-                                                </>
-                                            )}
-                                        </div>
-                                        <div className="h-3 w-px bg-reach-blue/20"></div>
-                                        <div>BTC Feed: <span className="text-reach-blue">{navData.btcTime}</span></div>
-                                        <div className="h-3 w-px bg-reach-blue/20"></div>
-                                        <div>MSTR Feed: <span className="text-reach-blue">{navData.mstrTime}</span></div>
-                                        <div className="ml-auto opacity-50 hover:opacity-100 transition-opacity">
-                                            <a 
-                                                href={`https://basescan.org/address/${ORACLE_ADDRESS}`} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-1 hover:text-reach-blue hover:underline"
-                                            >
-                                                Contract <ExternalLink className="w-2 h-2" />
-                                            </a>
+                            {/* Social Boost Widget */}
+                            <div className="mb-8 bg-gradient-to-r from-reach-blue/10 to-transparent p-4 border-l-4 border-reach-blue relative overflow-hidden">
+                                <div className="absolute right-0 top-0 bottom-0 w-32 bg-crosshatch opacity-10"></div>
+                                <div className="flex items-center justify-between relative z-10">
+                                    <div>
+                                        <p className="font-mono text-[10px] uppercase tracking-widest text-reach-blue/60 mb-1">SocialFi Boost Active</p>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="font-display text-2xl font-bold text-reach-blue">Tier 1</span>
+                                            <span className="font-mono text-xs text-green-600 font-bold">+1.5% APY</span>
                                         </div>
                                     </div>
-                                )}
+                                    <div className="text-right">
+                                        <p className="font-mono text-[10px] uppercase tracking-widest text-reach-blue/60 mb-1">Your Reach Score</p>
+                                        <p className="font-mono text-xl font-bold text-reach-blue">850</p>
+                                    </div>
+                                </div>
+                            </div>
 
                             {/* Strategy Visual */}
                             <div className="mb-8 relative p-4 border border-reach-blue/20 bg-reach-paper/50">
-                                <p className="font-mono text-[10px] uppercase tracking-widest absolute -top-2 left-4 bg-reach-paper px-2 text-reach-blue">Allocation Strategy</p>
+                                <p className="font-mono text--[10px] tracking-widest absolute -top-2 left-4 bg-reach-paper px-2 text-reach-blue">Allocation Strategy</p>
                                 <div className="flex items-center gap-2 h-16 w-full mt-2">
                                     <div className="h-full bg-reach-blue flex items-center justify-center relative group overflow-hidden" style={{ width: '80%' }}>
                                         <div className="absolute inset-0 bg-crosshatch opacity-20"></div>
@@ -204,7 +223,7 @@ export default function TradBTCPage() {
                                         <div className="absolute inset-0 bg-hatch opacity-20"></div>
                                         <span className="relative text-reach-blue font-display text-xl font-bold z-10">20%</span>
                                         <div className="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
-                                            <span className="text-reach-blue text-[10px] font-mono text-center px-1 leading-tight">Custody &<br/>Liquidity</span>
+                                            <span className="text-reach-blue text-[10px] font-mono text-center px-1 leading-tight">Custody &<br />Liquidity</span>
                                         </div>
                                     </div>
                                 </div>
@@ -248,14 +267,14 @@ export default function TradBTCPage() {
                             {/* Deposit Action */}
                             <div className="mt-8 pt-6 border-t-2 border-dotted border-reach-blue/30">
                                 <div className="flex flex-col gap-4">
-                                    <label className="font-mono text-sm font-bold uppercase flex justify-between">
+                                    <label className="font-mono text-sm font-bold flex justify-between">
                                         <span>Deposit Amount</span>
                                         <span className="opacity-50">Balance: 0.00 BTC</span>
                                     </label>
                                     <div className="flex gap-2">
                                         <div className="relative flex-1">
-                                            <input 
-                                                type="text" 
+                                            <input
+                                                type="text"
                                                 placeholder="0.00"
                                                 value={depositAmount}
                                                 onChange={(e) => setDepositAmount(e.target.value)}
@@ -263,7 +282,7 @@ export default function TradBTCPage() {
                                             />
                                             <span className="absolute right-3 top-1/2 transform -translate-y-1/2 font-mono font-bold text-reach-blue/50">BTC</span>
                                         </div>
-                                        <button className="bg-reach-blue text-reach-paper px-6 py-3 font-display text-xl font-bold uppercase hover:bg-reach-blue/90 transition-colors border-2 border-transparent hover:border-reach-blue bg-crosshatch relative group">
+                                        <button className="bg-reach-blue text-reach-paper px-6 py-3 font-display text-xl font-bold hover:bg-reach-blue/90 transition-colors border-2 border-transparent hover:border-reach-blue bg-crosshatch relative group">
                                             <span className="relative bg-reach-blue px-2 group-hover:bg-transparent group-hover:text-reach-blue transition-colors">Deposit</span>
                                         </button>
                                     </div>
@@ -278,11 +297,11 @@ export default function TradBTCPage() {
 
                     {/* Right Column: Info / Context */}
                     <div className="space-y-6">
-                        
+
                         {/* Info Card 1 */}
                         <div className="bg-reach-blue text-reach-paper p-6 relative overflow-hidden">
                             <div className="absolute inset-0 bg-crosshatch opacity-10"></div>
-                            <h3 className="font-display text-2xl uppercase font-bold mb-4 relative z-10 border-b border-reach-paper/20 pb-2">
+                            <h3 className="font-display text-2xl font-bold mb-4 relative z-10 border-b border-reach-paper/20 pb-2">
                                 How it works
                             </h3>
                             <ul className="space-y-4 relative z-10 font-mono text-xs leading-relaxed opacity-90">
@@ -305,9 +324,9 @@ export default function TradBTCPage() {
                             </ul>
                         </div>
 
-                         {/* Info Card 2 */}
-                         <div className="border-sketchy p-6 relative">
-                            <h3 className="font-display text-xl uppercase font-bold mb-2 text-reach-blue">
+                        {/* Info Card 2 */}
+                        <div className="border-sketchy p-6 relative">
+                            <h3 className="font-display text-xl font-bold mb-2 text-reach-blue">
                                 Security First
                             </h3>
                             <p className="font-mono text-xs text-reach-blue/80 leading-relaxed mb-4">
@@ -321,8 +340,8 @@ export default function TradBTCPage() {
 
                     </div>
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     )
 }
 

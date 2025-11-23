@@ -1,113 +1,143 @@
-# REACH
+# Reach ⚡️
 
-![Reach Banner](images/reach-banner.png)
- 
-### The Currency of Attention
+> **The SocialFi Layer for the New Internet.**  
+> *Where Attention Meets Finance.*
 
-**REACH turns social engagement into real-time on-chain rewards.**  
-Protocols launch AI-scored posting campaigns, and users earn streaming tokens for tweeting or casting about them across X and Farcaster. It’s social mining for the entire crypto ecosystem.
+![Reach Banner](./images/reach-banner.png)
 
 ---
 
-## What REACH Is
+## 🏆 Hackathon Submission
 
-REACH is an **AI-powered, multi-platform social mining protocol** that streams real tokens to users in real-time for growing a protocol's reach across X and Farcaster. 
-
-The system rewards **actual influence**, not spam.
-
-- **Multi-Platform**: X + Farcaster (eventually Lens, Warpcast, Telegram).
-- **Protocol-Driven**: Protocols launch their own campaigns.
-- **AI-Scored**: AI scores ANY interaction about them.
-- **Real-Time**: Users earn actual tokens streamed via Superfluid.
-- **Transparent**: Entirely on-chain, transparent, and composable.
-- **Frictionless**: No tagging required — we detect organic mentions.
-- **Direct**: Incentives go directly from protocol → user.
+**Reach** is a cutting-edge **SocialFi** platform that bridges the gap between social engagement and decentralized finance. By combining the social power of **Farcaster** with the financial robustness of **Bitcoin DeFi**, we are creating a new economy where attention is currency and yield is accessible.
 
 ---
 
-## What REACH is NOT (vs Kaito Yaps)
+## 🚀 The Problem
 
-| Feature | Kaito Yaps | REACH |
-| :--- | :--- | :--- |
-| **Platforms** | Single-platform (X only) | **Multi-platform** (X + Farcaster, etc.) |
-| **Decisions** | Centralized reward decisions | **AI scores ANY interaction** |
-| **Incentives** | Points leaderboard | **Real tokens streamed via Superfluid** |
-| **User Action** | Requires tagging KaitoAI | **No tagging required** (organic detection) |
-| **Campaigns** | Limited campaign control | **Protocols launch their own campaigns** |
-| **Scoring** | Opaque scoring | **Transparent, AI-driven scoring** |
-| **Value Flow** | No on-chain value flow | **Entirely on-chain** |
+In the current digital landscape:
+1.  **Attention is Undervalued**: Users create massive value for platforms but capture little of it. "Likes" are vanity metrics, not financial assets.
+2.  **DeFi is Disconnected**: High-quality financial products (like Bitcoin yield) are siloed away from where people actually spend their time—social media.
+3.  **Engagement is Noisy**: It's hard to distinguish between high-quality discourse and spam/bots.
 
----
+## 💡 The Solution: SocialFi
 
-## Uniswap v4 Hooks Integration
+**Reach** solves this by creating a unified ecosystem:
 
-REACH leverages Uniswap v4 Hooks to create a direct link between social sentiment and DeFi mechanics.
-
-### 1. AI-Scored Social → Dynamic Swap Fees (Hook)
-*This is the cleanest fit for Uniswap v4.*
-
-**The Idea:**
-Swap fees in the pool dynamically change based on the social reach or sentiment of a token — as scored by REACH’s AI.
-
-**Hook Logic:**
-- **If a token’s social score spikes** → Make swap fees **lower** (incentivize trading during hype moments).
-- **If sentiment is negative** → **Increase** fees (protect LPs from LVR, volatility, bot farming).
-
-**Why it works:**
-This becomes a Uniswap v4 Hook that reads REACH AI scores to dynamically adjust pool fees.
-- **Real on-chain data input**
-- **Real world context (social signals)**
-- **Actual impact on LPs & traders**
-- Fits both **Stable** and **Volatile** categories.
+*   **Social Layer**: We use **AI Agents** to analyze and score Farcaster engagement in real-time. It's not just about volume; it's about *quality*.
+*   **DeFi Layer**: We introduce **TradBTC**, offering institutional-grade Bitcoin yields directly within the social experience.
+*   **The Bridge**: Your "Reach Score" (Social Reputation) is the key to unlocking financial opportunities.
 
 ---
 
-## TradBTC: Institutional Yield Vaults
+## ✨ Key Features
 
-**Bridging Bitcoin Staking with Institutional Derivatives.**
+### 1. 🤖 AI-Powered Engagement Scoring
+We don't just count likes. Our **Azure OpenAI** agents analyze the context, sentiment, and quality of every interaction (mentions, replies, casts).
+*   **Smart Filtering**: Distinguishes between genuine conversation and "GM" spam.
+*   **Real-Time Tracking**: Powered by **Neynar** webhooks.
+*   **Reputation Score**: Users earn a dynamic "Reach Score" based on their contribution to the network.
 
-Based on the TradBTC Whitepaper, this module introduces a novel framework for maximizing Bitcoin yields by combining native staking with professional derivative strategies.
+### 2. 💰 TradBTC: Bitcoin Yield Vaults
+Seamlessly integrated DeFi for the social user.
+*   **Babylon Integration**: Stake BTC to earn trustless yield.
+*   **Institutional Strategies**: Access low-risk, high-yield vaults previously reserved for whales.
+*   **Live Oracles**: Powered by **Pyth Network** for real-time NAV (Net Asset Value) updates and transparency.
+*   **MSTR Tracking**: Live tracking of MicroStrategy's NAV as a benchmark.
 
-### Core Mechanism
-- **Dual Allocation Strategy**:
-  - **80%** staked directly on **Babylon Protocol** (Risk-free consensus yield).
-  - **20%** allocated to **Institutional Yield Strategies** (Delta-neutral, low-risk derivatives via custodians like Copper/Anchorage).
-- **TradBTC Token**: A liquid restaking token representing the vault position (1:1 peg target).
-- **Settlement**: Monthly Net Asset Value (NAV) updates via **Pyth Network** oracles.
-- **Target Yield**: **7-12% APY** (significantly enhancing the baseline 0.5-1%).
-
-*The interface is available via the Dashboard under the "TradBTC" tab.*
-
----
-
-## Deployed Contracts (Sepolia)
-
-| Contract | Address | Explorer |
-| :--- | :--- | :--- |
-| **REACH Supertoken** | `0xE58C945Fbb1f2c5e7398f1a4B9538f52778B31a7` | [Etherscan](https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7) |
-| **REACH Pool** | `0x2cc199976B4ACBe4211E943c1E7F070d76570D4e` | [Etherscan](https://sepolia.etherscan.io/address/0x2cc199976B4ACBe4211E943c1E7F070d76570D4e) |
+### 3. 🔐 Seamless Onboarding
+*   **Privy Auth**: Login with your Farcaster account in seconds.
+*   **Non-Custodial**: You own your keys and your coins.
 
 ---
 
-## Development
+## 🛠 Tech Stack
 
-This is a [Next.js](https://nextjs.org/) project.
+We built Reach using the best-in-class technologies for Web3 and AI:
+
+| Category | Technology | Usage |
+|----------|------------|-------|
+| **Frontend** | **Next.js 15** | High-performance React framework with Blueprint UI theme. |
+| **Social** | **Farcaster** | The decentralized social protocol. |
+| **Auth** | **Privy** | Seamless crypto & social login. |
+| **Data** | **Neynar** | Real-time Farcaster data & webhooks. |
+| **AI** | **Azure OpenAI** | LLM for semantic analysis and scoring. |
+| **Database** | **Supabase** | Real-time database for user profiles and scores. |
+| **DeFi** | **Foundry** | Smart contract development and testing. |
+| **Oracles** | **Pyth Network** | Real-time price feeds for BTC and MSTR. |
+| **Staking** | **Babylon** | Bitcoin staking protocol integration. |
+
+---
+
+## 📸 Screenshots
+
+| Dashboard | TradBTC Vault |
+|-----------|---------------|
+| *Social Engagement Tracking* | *Bitcoin Yield Interface* |
+| ![Dashboard](./images/dashboard_mock.png) | ![TradBTC](./images/tradbtc_mock.png) |
+
+*(Note: Screenshots to be added)*
+
+---
+
+## 🏗 Architecture
+
+```mermaid
+graph TD
+    User[User] -->|Casts/Interacts| Farcaster
+    Farcaster -->|Webhook| Neynar
+    Neynar -->|Event| ReachAPI[Reach API]
+    ReachAPI -->|Analyze| AI[Azure OpenAI]
+    AI -->|Score| DB[(Supabase)]
+    
+    User -->|Deposits BTC| TradBTC[TradBTC Vault]
+    TradBTC -->|Stakes| Babylon[Babylon Protocol]
+    Pyth[Pyth Oracle] -->|Feeds Prices| TradBTC
+```
+
+---
+
+## 🏃‍♂️ Getting Started
 
 ### Prerequisites
-- Node.js 22+
-- Yarn
+*   Node.js & Yarn
+*   Foundry (for smart contracts)
 
-### Getting Started
+### Installation
 
-1.  **Install dependencies**
+1.  **Clone the repo**
+    ```bash
+    git clone https://github.com/yourusername/reach.git
+    cd reach
+    ```
+
+2.  **Install dependencies**
     ```bash
     yarn install
     ```
 
-2.  **Start the development server**
+3.  **Set up Environment Variables**
+    Copy `.env.example` to `.env.local` and fill in your keys (Privy, Supabase, Neynar, OpenAI).
+
+4.  **Run the Development Server**
     ```bash
     yarn dev
     ```
 
-3.  **Open in Browser**
-    Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5.  **Run Smart Contract Tests**
+    ```bash
+    cd mstr-nav-oracle
+    forge test
+    ```
+
+---
+
+## 🔮 What's Next?
+
+*   **Token Launch**: Launching $REACH token to reward high-quality engagement.
+*   **More Vaults**: Expanding TradBTC to include ETH and SOL strategies.
+*   **DAO Governance**: Allowing high-score users to vote on vault strategies.
+
+---
+
+Made with ❤️ for the **SocialFi Hackathon**.

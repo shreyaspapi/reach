@@ -19,7 +19,7 @@ interface LeaderboardEntry {
 }
 
 export default function ExplorePage() {
-    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+    const [leaderboard, setLeaderboard] = useState < LeaderboardEntry[] > ([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -41,7 +41,7 @@ export default function ExplorePage() {
         fetchLeaderboard();
     }, []);
 
-    const filteredLeaderboard = leaderboard.filter(entry => 
+    const filteredLeaderboard = leaderboard.filter(entry =>
         entry.users.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (entry.users.display_name && entry.users.display_name.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -53,7 +53,7 @@ export default function ExplorePage() {
                 <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative">
                     <Link href="/dashboard" className="flex items-center gap-2 text-reach-blue hover:underline decoration-wavy">
                         <ArrowLeft className="w-4 h-4" />
-                        <span className="font-mono text-xs font-bold uppercase tracking-widest">Back to Dashboard</span>
+                        <span className="font-mono text-xs font-bold tracking-widest">Back to Dashboard</span>
                     </Link>
                 </div>
             </header>
@@ -63,14 +63,14 @@ export default function ExplorePage() {
                 <div className="max-w-4xl mx-auto w-full mb-12 relative">
                     <div className="absolute -left-4 top-0 bottom-0 w-1 bg-reach-blue opacity-20"></div>
                     <div className="pl-6">
-                        <div className="inline-block bg-reach-blue text-reach-paper px-3 py-1 font-mono text-xs font-bold uppercase mb-4 bg-crosshatch relative">
+                        <div className="inline-block bg-reach-blue text-reach-paper px-3 py-1 font-mono text-xs font-bold mb-4 bg-crosshatch relative">
                             <span className="bg-reach-blue px-2 relative">Community</span>
                         </div>
-                        <h1 className="font-display text-5xl md:text-7xl text-reach-blue uppercase leading-none font-extrabold tracking-tight">
+                        <h1 className="font-display text-5xl md:text-7xl text-reach-blue leading-none font-extrabold tracking-tight">
                             Explore
                         </h1>
                         <p className="font-mono text-lg md:text-xl text-reach-blue/80 mt-2 max-w-2xl">
-                            Discover top performing users and their engagement scores.
+                            Discover top performing users. <span className="font-bold bg-yellow-200/50 px-1">Higher Reach Score = Higher Yields.</span>
                         </p>
                     </div>
                 </div>
@@ -81,9 +81,9 @@ export default function ExplorePage() {
                         <div className="absolute left-4 pointer-events-none z-10 flex items-center justify-center">
                             <Search className="w-5 h-5 text-reach-blue/40" />
                         </div>
-                        <input 
-                            type="text" 
-                            placeholder="Search users by name..." 
+                        <input
+                            type="text"
+                            placeholder="Search users by name..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full h-14 pl-12 pr-4 bg-white/50 border-2 border-reach-blue font-mono text-lg text-reach-blue placeholder:text-reach-blue/30 focus:outline-none focus:ring-2 focus:ring-reach-blue/20 transition-all"
@@ -92,7 +92,7 @@ export default function ExplorePage() {
                     <div className="bg-reach-blue text-reach-paper p-4 flex flex-col justify-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-crosshatch opacity-10"></div>
                         <div className="relative z-10 flex items-center justify-between">
-                            <span className="font-mono text-xs uppercase opacity-80">Total Active Users</span>
+                            <span className="font-mono text-xs opacity-80">Total Active Users</span>
                             <Users className="w-4 h-4 opacity-80" />
                         </div>
                         <p className="relative z-10 font-display text-3xl font-bold">{leaderboard.length}</p>
@@ -101,9 +101,9 @@ export default function ExplorePage() {
 
                 {/* Leaderboard Table */}
                 <div className="max-w-4xl mx-auto w-full bg-white/40 backdrop-blur-sm border-double-thick border-reach-blue relative guide-corners min-h-[400px]">
-                    
+
                     {/* Table Header */}
-                    <div className="grid grid-cols-12 gap-4 p-4 border-b-2 border-reach-blue bg-reach-blue/5 font-mono text-xs font-bold uppercase tracking-widest text-reach-blue/70">
+                    <div className="grid grid-cols-12 gap-4 p-4 border-b-2 border-reach-blue bg-reach-blue/5 font-mono text-xs font-bold tracking-widest text-reach-blue/70">
                         <div className="col-span-1 text-center">#</div>
                         <div className="col-span-5">User</div>
                         <div className="col-span-2 text-right">Avg Score</div>
@@ -125,8 +125,8 @@ export default function ExplorePage() {
                     ) : (
                         <div className="divide-y divide-dashed divide-reach-blue/20">
                             {filteredLeaderboard.map((entry, index) => (
-                                <Link 
-                                    href={`/u/${entry.users.username}`} 
+                                <Link
+                                    href={`/u/${entry.users.username}`}
                                     key={entry.fid}
                                     className="grid grid-cols-12 gap-4 p-4 hover:bg-reach-blue/5 transition-colors group items-center"
                                 >
