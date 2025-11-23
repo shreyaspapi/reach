@@ -222,7 +222,7 @@ export function EngagementHistory() {
                                     ) : (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img 
-                                            src="https://raw.githubusercontent.com/vrypan/farcaster-brand/refs/heads/main/icons/icon-rounded/purple-white.png" 
+                                            src="/farcaster.svg" 
                                             alt="Farcaster" 
                                             className="w-full h-full rounded-sm"
                                         />

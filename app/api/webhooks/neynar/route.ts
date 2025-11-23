@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectedUserFids } from '@/lib/backend';
 import { calculateEngagementScore, getUserHistory } from '@/lib/llm-scoring';
 import { getOrCreateUser, saveCast } from '@/lib/database';
+import { updateMemberUnits } from '@/lib/gda-contract';
 
 export async function GET(request: NextRequest) {
     console.log('Received GET request');
@@ -149,6 +150,71 @@ async function processEvent(event: any) {
 
                 if (savedCast) {
                     console.log(`✅ Cast saved to database (ID: ${savedCast.id})`);
+
+                    // TRIGGER ON-CHAIN UPDATE
+                    // Only if we have a wallet address for this user
+                    if (dbUser.wallet_address) {
+                        console.log('⛓️ Triggering on-chain unit update...');
+                        
+                        // Fetch current GDA units from DB (or contract, but DB is faster cache)
+                        // For now, we'll just ADD the new score to the existing units
+                        // In a real app, you might want to fetch the *current* on-chain units first to be safe
+                        
+                        // Calculate new total units
+                        // dbUser.gda_units should have been updated by the trigger, but let's be safe and assume we add score
+                        // Note: The DB trigger `update_user_stats` runs AFTER insert.
+                        // We can query the updated stats or just pass score.
+                        
+                        // Let's fetch the latest stats to get the ACCUMULATED score
+                        // (Since GDA units = total accumulated score)
+                        // Alternatively, we can just pass the *new total* if we had it.
+                        
+                        // Simple approach: Get the user's total accumulated score from the DB
+                        // (which acts as the unit count)
+                        // We need to fetch the user_stats table.
+                        
+                        // For this MVP, let's assume we want to add the CURRENT CAST'S SCORE to their units.
+                        // But `updateMemberUnits` sets the *absolute* value, not relative.
+                        // So we need Total Score.
+                        
+                        // We can't easily get the fresh stats here without another DB call.
+                        // Let's rely on the return value of `saveCast`? No, that returns the cast.
+                        
+                        // Let's query user_stats for this user.
+                        // (Implementation detail: We need to import supabase client here or add a helper)
+                        // For now, let's do a "blind" add if we can't query, OR add a helper.
+                        
+                        // Better: Update `saveCast` or `getOrCreateUser` to return stats? 
+                        // Let's just import the supabase client here for a quick read.
+                        const { createClient } = require('@supabase/supabase-js');
+                        const supabase = createClient(
+                            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                            process.env.SUPABASE_SERVICE_ROLE_KEY!
+                        );
+                        
+                        const { data: stats } = await supabase
+                            .from('user_stats')
+                            .select('gda_units')
+                            .eq('user_id', dbUser.id)
+                            .single();
+                            
+                        if (stats) {
+                            const newTotalUnits = stats.gda_units; // This was updated by the trigger!
+                            console.log(`   Current GDA Units (from DB): ${newTotalUnits}`);
+                            
+                            // Call the contract
+                            const txResult = await updateMemberUnits(dbUser.wallet_address, newTotalUnits);
+                            
+                            if (txResult.success) {
+                                console.log(`✅ On-chain units updated! Tx: ${txResult.txHash}`);
+                            } else {
+                                console.error(`❌ Failed to update on-chain units: ${txResult.error}`);
+                            }
+                        }
+                    } else {
+                        console.log('⚠️ User has no wallet address connected - skipping on-chain update');
+                    }
+
                 } else {
                     console.log('ℹ️  Cast already exists or failed to save');
                 }

@@ -166,6 +166,7 @@ BEGIN
         total_likes_received = user_stats.total_likes_received + NEW.likes_count,
         total_recasts_received = user_stats.total_recasts_received + NEW.recasts_count,
         total_replies_received = user_stats.total_replies_received + NEW.replies_count,
+        gda_units = user_stats.gda_units + NEW.total_score, -- Add new score to GDA units
         updated_at = NOW();
     
     RETURN NEW;

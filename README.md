@@ -62,6 +62,33 @@ This becomes a Uniswap v4 Hook that reads REACH AI scores to dynamically adjust 
 
 ---
 
+## TradBTC: Institutional Yield Vaults
+
+**Bridging Bitcoin Staking with Institutional Derivatives.**
+
+Based on the TradBTC Whitepaper, this module introduces a novel framework for maximizing Bitcoin yields by combining native staking with professional derivative strategies.
+
+### Core Mechanism
+- **Dual Allocation Strategy**:
+  - **80%** staked directly on **Babylon Protocol** (Risk-free consensus yield).
+  - **20%** allocated to **Institutional Yield Strategies** (Delta-neutral, low-risk derivatives via custodians like Copper/Anchorage).
+- **TradBTC Token**: A liquid restaking token representing the vault position (1:1 peg target).
+- **Settlement**: Monthly Net Asset Value (NAV) updates via **Pyth Network** oracles.
+- **Target Yield**: **7-12% APY** (significantly enhancing the baseline 0.5-1%).
+
+*The interface is available via the Dashboard under the "TradBTC" tab.*
+
+---
+
+## Deployed Contracts (Sepolia)
+
+| Contract | Address | Explorer |
+| :--- | :--- | :--- |
+| **REACH Supertoken** | `0xE58C945Fbb1f2c5e7398f1a4B9538f52778B31a7` | [Etherscan](https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7) |
+| **REACH Pool** | `0x2cc199976B4ACBe4211E943c1E7F070d76570D4e` | [Etherscan](https://sepolia.etherscan.io/address/0x2cc199976B4ACBe4211E943c1E7F070d76570D4e) |
+
+---
+
 ## Development
 
 This is a [Next.js](https://nextjs.org/) project.

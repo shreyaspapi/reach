@@ -1,6 +1,6 @@
 "use client"
 
-import { LogOut, ChevronDown } from "lucide-react"
+import { LogOut, ChevronDown, Wallet } from "lucide-react"
 import Link from "next/link"
 import { StreamCounter } from "@/components/stream-counter"
 import { PointsList } from "@/components/points-list"
@@ -40,13 +40,23 @@ export default function DashboardPage() {
                     </p>
                 </div>
 
-                <button
-                    onClick={handleLogout}
-                    className="pointer-events-auto p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer"
-                >
-                    <LogOut className="w-5 h-5" />
-                    <span className="sr-only">Sign out</span>
-                </button>
+                <div className="flex items-start gap-4 pointer-events-auto">
+                    <Link 
+                        href="/tradbtc"
+                        className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer flex items-center gap-2"
+                    >
+                        <Wallet className="w-5 h-5" />
+                        <span className="font-mono text-xs font-bold uppercase hidden md:inline">TradBTC</span>
+                    </Link>
+
+                    <button
+                        onClick={handleLogout}
+                        className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer"
+                    >
+                        <LogOut className="w-5 h-5" />
+                        <span className="sr-only">Sign out</span>
+                    </button>
+                </div>
             </header>
 
             <main className="flex-1 flex flex-col">
@@ -168,6 +178,33 @@ export default function DashboardPage() {
                                         reward="Users earn $REACH tokens in real‑time streams based on their AI‑evaluated engagement."
                                         status="Active"
                                     />
+                                </div>
+                            </div>
+
+                            {/* Contract Info Footer */}
+                            <div className="max-w-4xl mx-auto mb-12 pt-8 border-t border-dashed border-reach-blue/20 opacity-60 hover:opacity-100 transition-opacity">
+                                <div className="flex flex-col md:flex-row justify-between gap-4 font-mono text-[10px] uppercase">
+                                    <div className="space-y-2">
+                                        <p className="font-bold">Deployed Contracts (Sepolia)</p>
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex gap-2">
+                                                <span>REACH Supertoken:</span>
+                                                <a href="https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-reach-blue decoration-wavy">
+                                                    0xE58C...31a7
+                                                </a>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <span>Pool Contract:</span>
+                                                <a href="https://sepolia.etherscan.io/address/0x2cc199976B4ACBe4211E943c1E7F070d76570D4e" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-reach-blue decoration-wavy">
+                                                    0x2cc1...D4e
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p>System Status: <span className="text-green-600 font-bold">OPERATIONAL</span></p>
+                                        <p>Network: Sepolia Testnet</p>
+                                    </div>
                                 </div>
                             </div>
                         </>
