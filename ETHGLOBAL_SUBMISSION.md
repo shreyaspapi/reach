@@ -148,7 +148,7 @@ Reach is a **full-stack SocialFi protocol** built with cutting-edge Web3 and AI 
   - BTC price from Pyth Network
   - MSTR stock price from Pyth Network
   - Calculates NAV per share and MNAV premium in real-time
-- **Deployed on Base Sepolia**: `0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f`
+- **Deployed on Ethereum Sepolia**: `0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f`
 
 **Integration with Babylon**:
 - 80% of vault assets stake BTC on Babylon for trustless yield

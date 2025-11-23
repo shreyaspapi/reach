@@ -176,7 +176,7 @@ export default function TradBTCPage() {
                                     <div>MSTR Feed: <span className="text-reach-blue">{navData.mstrTime}</span></div>
                                     <div className="ml-auto opacity-50 hover:opacity-100 transition-opacity">
                                         <a
-                                            href={`https://basescan.org/address/${ORACLE_ADDRESS}`}
+                                            href={`https://sepolia.etherscan.io/address/${ORACLE_ADDRESS}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex items-center gap-1 hover:text-reach-blue hover:underline"
