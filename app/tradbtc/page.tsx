@@ -90,10 +90,7 @@ export default function TradBTCPage() {
 
                     <div className="w-px h-4 bg-reach-blue/20"></div>
 
-                    <Link href="/explore" className="flex items-center gap-2 text-reach-blue hover:underline decoration-wavy">
-                        <Globe className="w-4 h-4" />
-                        <span className="font-mono text-xs font-bold tracking-widest">Explore</span>
-                    </Link>
+
                 </div>
             </header>
 
