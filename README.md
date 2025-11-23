@@ -175,5 +175,3 @@ graph TD
 *   **DAO Governance**: Allowing high-score users to vote on vault strategies.
 
 ---
-
-Made with ❤️ for the **SocialFi Hackathon**.
