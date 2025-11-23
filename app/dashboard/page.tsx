@@ -1,6 +1,6 @@
 "use client"
 
-import { LogOut, ChevronDown, Wallet } from "lucide-react"
+import { LogOut, ChevronDown, Wallet, Globe } from "lucide-react"
 import Link from "next/link"
 import { StreamCounter } from "@/components/stream-counter"
 import { PointsList } from "@/components/points-list"
@@ -41,6 +41,14 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex items-start gap-4 pointer-events-auto">
+                    <Link 
+                        href="/explore"
+                        className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer flex items-center gap-2"
+                    >
+                        <Globe className="w-5 h-5" />
+                        <span className="font-mono text-xs font-bold uppercase hidden md:inline">Explore</span>
+                    </Link>
+
                     <Link 
                         href="/tradbtc"
                         className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer flex items-center gap-2"

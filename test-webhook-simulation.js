@@ -10,8 +10,8 @@ async function runTest() {
     
     // Replace with your actual FID and Username
     // You can find your FID on Warpcast profile or by checking logs
-    const TEST_FID = 830020; // Defaulting to Shreyas's FID based on code context, CHANGE THIS if needed
-    const TEST_USERNAME = 'shreyaspapi'; 
+    const TEST_FID = 1024384; // Defaulting to Shreyas's FID based on code context, CHANGE THIS if needed
+    const TEST_USERNAME = 'humblefool06'; 
     
     // A mock cast event structure matching Neynar's webhook format
     const mockEvent = {
@@ -31,8 +31,8 @@ async function runTest() {
                 fid: TEST_FID,
                 custody_address: "0x...",
                 username: TEST_USERNAME,
-                display_name: "Test User",
-                pfp_url: "https://i.imgur.com/...",
+                display_name: "Abhishek Ekaanth", // FIXED: Was "Test User"
+                pfp_url: "https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/34c5df39-5dac-439e-6f1f-940ef6136400/rectcrop3", // You can add your real PFP URL here if you want
                 profile: {
                     bio: {
                         text: "Building cool stuff"

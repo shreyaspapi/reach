@@ -61,7 +61,7 @@ export function ConnectedAccounts() {
                      <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <XIcon className="w-5 h-5 text-reach-blue" />
-                            <span className="font-mono font-bold uppercase text-sm">X (Twitter)</span>
+                            <span className="font-mono font-bold uppercase text-sm">(Twitter)</span>
                         </div>
                         {twitterAccount ? (
                             <span className="text-xs font-mono bg-reach-blue text-white px-2 py-0.5 rounded-full">Connected</span>
@@ -100,7 +100,7 @@ export function ConnectedAccounts() {
                         <div className="flex items-center gap-2">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img 
-                                src="https://raw.githubusercontent.com/vrypan/farcaster-brand/refs/heads/main/icons/icon-rounded/purple-white.png" 
+                                src="./farcaster.svg" 
                                 alt="Farcaster" 
                                 className="w-5 h-5 rounded-sm" 
                             />

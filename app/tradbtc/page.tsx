@@ -2,7 +2,7 @@
 
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Info, ShieldCheck, TrendingUp, Lock, Clock, ExternalLink, Bitcoin, Loader2 } from "lucide-react";
+import { ArrowLeft, Info, ShieldCheck, TrendingUp, Lock, Clock, ExternalLink, Bitcoin, Loader2, Globe } from "lucide-react";
 import Link from "next/link";
 
 // Contract Address (Deployed on Base)
@@ -80,10 +80,17 @@ export default function TradBTCPage() {
         <div className="min-h-screen flex flex-col max-w-5xl mx-auto w-full">
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 p-4 md:p-8 flex justify-between items-start pointer-events-none">
-                <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative">
+                <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative flex items-center gap-4">
                     <Link href="/dashboard" className="flex items-center gap-2 text-reach-blue hover:underline decoration-wavy">
                         <ArrowLeft className="w-4 h-4" />
                         <span className="font-mono text-xs font-bold uppercase tracking-widest">Back to Dashboard</span>
+                    </Link>
+                    
+                    <div className="w-px h-4 bg-reach-blue/20"></div>
+
+                    <Link href="/explore" className="flex items-center gap-2 text-reach-blue hover:underline decoration-wavy">
+                        <Globe className="w-4 h-4" />
+                        <span className="font-mono text-xs font-bold uppercase tracking-widest">Explore</span>
                     </Link>
                 </div>
             </header>

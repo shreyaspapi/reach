@@ -106,6 +106,34 @@ export async function getUserByFid(fid: number): Promise<User | null> {
     }
 }
 
+/**
+ * Get user by Username
+ */
+export async function getUserByUsername(username: string): Promise<User | null> {
+    if (!supabaseAdmin) {
+        console.error('Supabase admin client not initialized');
+        return null;
+    }
+
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('users')
+            .select('*')
+            .ilike('username', username) // Case-insensitive match
+            .single();
+
+        if (error) {
+            console.error('Error fetching user by username:', error);
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error in getUserByUsername:', error);
+        return null;
+    }
+}
+
 // ============================================================================
 // CAST OPERATIONS
 // ============================================================================

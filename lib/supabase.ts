@@ -92,6 +92,7 @@ export interface UserStats {
     most_active_hour?: number;
     total_rewards_earned: number;
     current_stream_rate: number;
+    gda_units: number; // Superfluid GDA units
     updated_at: string;
 }
 
