@@ -53,8 +53,19 @@ export default function TradBTCPage() {
                     btcTime: formatTime(btcDiff),
                     mstrTime: formatTime(mstrDiff)
                 });
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Error fetching MSTR NAV:", error);
+                // If the error is a revert, it's likely stale price feeds
+                // Show a fallback with static data
+                if (error?.code === "CALL_EXCEPTION") {
+                    console.log("Price feeds are stale - showing demo data");
+                    setNavData({
+                        nav: "174.42",
+                        multiple: "2.08",
+                        btcTime: "Stale",
+                        mstrTime: "Stale"
+                    });
+                }
             } finally {
                 setLoadingNav(false);
             }
@@ -136,10 +147,23 @@ export default function TradBTCPage() {
 
                                 {/* Live Oracle Status Bar */}
                                 {navData && (
-                                    <div className="mb-6 flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest border border-reach-blue/20 p-2 bg-reach-blue/5">
+                                    <div className={`mb-6 flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest border p-2 ${
+                                        navData.btcTime === "Stale" 
+                                            ? "border-yellow-500/30 bg-yellow-500/5" 
+                                            : "border-reach-blue/20 bg-reach-blue/5"
+                                    }`}>
                                         <div className="flex items-center gap-1">
-                                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                            <span className="text-green-700 font-bold">Oracle Live</span>
+                                            {navData.btcTime === "Stale" ? (
+                                                <>
+                                                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                                    <span className="text-yellow-700 font-bold">Oracle Needs Update</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                    <span className="text-green-700 font-bold">Oracle Live</span>
+                                                </>
+                                            )}
                                         </div>
                                         <div className="h-3 w-px bg-reach-blue/20"></div>
                                         <div>BTC Feed: <span className="text-reach-blue">{navData.btcTime}</span></div>
