@@ -13,7 +13,41 @@
 
 ---
 
-## 🚀 The Problem
+## � Deployed Contracts
+
+All Reach smart contracts are deployed and verified on testnet. Below are the contract addresses for interaction and verification:
+
+### Ethereum Sepolia Testnet
+
+| Contract | Address | Purpose | Explorer |
+|----------|---------|---------|----------|
+| **REACH Supertoken** | `0xE58C945fbb1f2c5e7398f1a4b9538f52778b31a7` | ERC-20 Superfluid token for streaming rewards | [View on Etherscan](https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7) |
+| **GDA Pool Contract** | `0x2cc199976B4ACBe4211E943c1E7F070d76570D4e` | Superfluid General Distribution Agreement pool for campaign rewards | [View on Etherscan](https://sepolia.etherscan.io/address/0x2cc199976B4ACBe4211E943c1E7F070d76570D4e) |
+| **GDA Forwarder** | `0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08` | Superfluid GDA forwarder for batch operations | [View on Etherscan](https://sepolia.etherscan.io/address/0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08) |
+
+### Sepolia Testnet
+
+| Contract | Address | Purpose | Explorer |
+|----------|---------|---------|----------|
+| **MSTR NAV Oracle** | `0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f` | Custom oracle fetching BTC and MSTR prices from Pyth Network | [View on BaseScan](https://sepolia.basescan.org/address/0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f) |
+
+### External Dependencies
+
+| Service | Address | Network | Purpose |
+|---------|---------|---------|---------|
+| **Pyth Oracle** | `0xDd24F84d36BF92C65F92307595335bdFab5Bbd21` | Sepolia | Pyth price feed contract for on-chain price updates |
+| **Pyth Oracle** | `0xA2aa501b19aff244D90cc15a4Cf739D2725B5729` | Base Mainnet | Pyth price feed contract (mainnet reference) |
+
+### Pyth Price Feed IDs
+
+| Asset | Feed ID | Description |
+|-------|---------|-------------|
+| **BTC/USD** | `0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43` | Bitcoin price feed |
+| **MSTR/USD** | `0xe1e80251e5f5184f2195008382538e847fafc36f751896889dd3d1b1f6111f09` | MicroStrategy stock price feed (Equity.MSTR.US) |
+
+---
+
+## �🚀 The Problem
 
 In the current digital landscape:
 1.  **Attention is Undervalued**: Users create massive value for platforms but capture little of it. "Likes" are vanity metrics, not financial assets.
@@ -69,7 +103,7 @@ We built Reach using the best-in-class technologies for Web3 and AI:
 
 ---
 
-## 📸 Screenshots
+## �📸 Screenshots
 
 | Dashboard | TradBTC Vault |
 |-----------|---------------|
