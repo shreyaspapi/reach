@@ -3,6 +3,7 @@ import { connectedUserFids } from '@/lib/backend';
 import { calculateEngagementScore, getUserHistory } from '@/lib/llm-scoring';
 import { getOrCreateUser, saveCast } from '@/lib/database';
 import { updateMemberUnits } from '@/lib/gda-contract';
+import { PrivyClient } from '@privy-io/server-auth';
 
 export async function GET(request: NextRequest) {
     console.log('Received GET request');
@@ -152,8 +153,53 @@ async function processEvent(event: any) {
                     console.log(`✅ Cast saved to database (ID: ${savedCast.id})`);
 
                     // TRIGGER ON-CHAIN UPDATE
-                    // Only if we have a wallet address for this user
-                    if (dbUser.wallet_address) {
+                    // Fetch the user's embedded wallet from Privy
+                    let walletAddress = dbUser.wallet_address;
+                    
+                    if (!walletAddress) {
+                        console.log('⛓️ Fetching embedded wallet from Privy...');
+                        try {
+                            const privyClient = new PrivyClient(
+                                process.env.PRIVY_APP_ID!,
+                                process.env.PRIVY_APP_SECRET!
+                            );
+                            
+                            // Get all users and find the one with this FID
+                            const users = await privyClient.getUsers();
+                            const privyUser = users.find(u => 
+                                u.linkedAccounts.some((acc: any) => 
+                                    acc.type === 'farcaster' && acc.fid === authorFid
+                                )
+                            );
+                            
+                            if (privyUser) {
+                                // Get the embedded wallet address
+                                const embeddedWallet = privyUser.linkedAccounts.find(
+                                    (acc: any) => acc.type === 'wallet' && acc.walletClientType === 'privy'
+                                );
+                                
+                                if (embeddedWallet && 'address' in embeddedWallet) {
+                                    walletAddress = (embeddedWallet as any).address;
+                                    console.log(`✅ Found embedded wallet: ${walletAddress}`);
+                                    
+                                    // Update DB with wallet address for future use
+                                    const { createClient } = require('@supabase/supabase-js');
+                                    const supabase = createClient(
+                                        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                                        process.env.SUPABASE_SERVICE_ROLE_KEY!
+                                    );
+                                    await supabase
+                                        .from('users')
+                                        .update({ wallet_address: walletAddress })
+                                        .eq('id', dbUser.id);
+                                }
+                            }
+                        } catch (privyError) {
+                            console.error('Error fetching Privy user:', privyError);
+                        }
+                    }
+                    
+                    if (walletAddress) {
                         console.log('⛓️ Triggering on-chain unit update...');
                         
                         // Fetch current GDA units from DB (or contract, but DB is faster cache)
@@ -203,7 +249,7 @@ async function processEvent(event: any) {
                             console.log(`   Current GDA Units (from DB): ${newTotalUnits}`);
                             
                             // Call the contract
-                            const txResult = await updateMemberUnits(dbUser.wallet_address, newTotalUnits);
+                            const txResult = await updateMemberUnits(walletAddress, newTotalUnits);
                             
                             if (txResult.success) {
                                 console.log(`✅ On-chain units updated! Tx: ${txResult.txHash}`);
@@ -212,7 +258,7 @@ async function processEvent(event: any) {
                             }
                         }
                     } else {
-                        console.log('⚠️ User has no wallet address connected - skipping on-chain update');
+                        console.log('⚠️ User has no embedded wallet - skipping on-chain update');
                     }
 
                 } else {
