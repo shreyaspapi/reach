@@ -24,19 +24,13 @@ All Reach smart contracts are deployed and verified on testnet. Below are the co
 | **REACH Supertoken** | `0xE58C945fbb1f2c5e7398f1a4b9538f52778b31a7` | ERC-20 Superfluid token for streaming rewards | [View on Etherscan](https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7) |
 | **GDA Pool Contract** | `0x2cc199976B4ACBe4211E943c1E7F070d76570D4e` | Superfluid General Distribution Agreement pool for campaign rewards | [View on Etherscan](https://sepolia.etherscan.io/address/0x2cc199976B4ACBe4211E943c1E7F070d76570D4e) |
 | **GDA Forwarder** | `0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08` | Superfluid GDA forwarder for batch operations | [View on Etherscan](https://sepolia.etherscan.io/address/0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08) |
-
-### Sepolia Testnet
-
-| Contract | Address | Purpose | Explorer |
-|----------|---------|---------|----------|
-| **MSTR NAV Oracle** | `0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f` | Custom oracle fetching BTC and MSTR prices from Pyth Network | [View on BaseScan](https://sepolia.basescan.org/address/0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f) |
+| **MSTR NAV Oracle** | `0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f` | Custom oracle fetching BTC and MSTR prices from Pyth Network | [View on Etherscan](https://sepolia.etherscan.io/address/0x21c1914f8f1a6cd3faaa08c761ec0990d01fab8f) |
 
 ### External Dependencies
 
 | Service | Address | Network | Purpose |
 |---------|---------|---------|---------|
 | **Pyth Oracle** | `0xDd24F84d36BF92C65F92307595335bdFab5Bbd21` | Sepolia | Pyth price feed contract for on-chain price updates |
-| **Pyth Oracle** | `0xA2aa501b19aff244D90cc15a4Cf739D2725B5729` | Base Mainnet | Pyth price feed contract (mainnet reference) |
 
 ### Pyth Price Feed IDs
 
