@@ -3,7 +3,7 @@
 > **The SocialFi Layer for the New Internet.**  
 > *Where Attention Meets Finance.*
 
-![Reach Banner](./images/reach-banner.png)
+![Reach Banner](https://raw.githubusercontent.com/shreyaspapi/reach/main/images/reach-banner.jpeg)
 
 ---
 
@@ -105,12 +105,14 @@ We built Reach using the best-in-class technologies for Web3 and AI:
 
 ## �📸 Screenshots
 
-| Dashboard | TradBTC Vault |
-|-----------|---------------|
-| *Social Engagement Tracking* | *Bitcoin Yield Interface* |
-| ![Dashboard](./images/dashboard_mock.png) | ![TradBTC](./images/tradbtc_mock.png) |
+### Dashboard - Social Engagement Tracking
+![Dashboard 1](https://raw.githubusercontent.com/shreyaspapi/reach/main/images/dashboard_1.png)
 
-*(Note: Screenshots to be added)*
+### Dashboard - Allocations & Campaigns
+![Dashboard 2](https://raw.githubusercontent.com/shreyaspapi/reach/main/images/dashboard_2.png)
+
+### TradBTC - Bitcoin Yield Vault
+![TradBTC Vault](https://raw.githubusercontent.com/shreyaspapi/reach/main/images/tradfi.png)
 
 ---
 
