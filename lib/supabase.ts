@@ -22,6 +22,10 @@ export const supabaseAdmin = supabaseServiceKey
         auth: {
             autoRefreshToken: false,
             persistSession: false
+        },
+        // Increase fetch timeout to avoid UND_ERR_CONNECT_TIMEOUT
+        global: {
+            fetch: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(30000) })
         }
     })
     : null;

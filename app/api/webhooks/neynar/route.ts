@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
 
         console.log('Received event:', event);
 
-        processEvent(event);
+        // MUST await this, otherwise the function terminates before async ops (DB/Blockchain) complete
+        await processEvent(event);
 
         return NextResponse.json({ status: 'ok' });
 
@@ -173,14 +174,19 @@ async function processEvent(event: any) {
                             );
                             
                             if (privyUser) {
-                                // Get the embedded wallet address
-                                const embeddedWallet = privyUser.linkedAccounts.find(
-                                    (acc: any) => acc.type === 'wallet' && acc.walletClientType === 'privy'
-                                );
+                                console.log(`🔍 Inspecting linked accounts for user ${privyUser.id}:`);
+                                privyUser.linkedAccounts.forEach(acc => {
+                                    console.log(`   - Type: ${acc.type}, Details: ${JSON.stringify(acc)}`);
+                                });
+
+                                // Try to find ANY wallet first
+                                // Prioritize 'privy' wallets, but fallback to any wallet
+                                const wallets = privyUser.linkedAccounts.filter((acc: any) => acc.type === 'wallet');
+                                const embeddedWallet = wallets.find((acc: any) => acc.walletClientType === 'privy') || wallets[0];
                                 
                                 if (embeddedWallet && 'address' in embeddedWallet) {
                                     walletAddress = (embeddedWallet as any).address;
-                                    console.log(`✅ Found embedded wallet: ${walletAddress}`);
+                                    console.log(`✅ Found wallet address: ${walletAddress}`);
                                     
                                     // Update DB with wallet address for future use
                                     const { createClient } = require('@supabase/supabase-js');
@@ -238,17 +244,20 @@ async function processEvent(event: any) {
                             process.env.SUPABASE_SERVICE_ROLE_KEY!
                         );
                         
-                        const { data: stats } = await supabase
+                        const { data: stats, error: statsError } = await supabase
                             .from('user_stats')
                             .select('gda_units')
                             .eq('user_id', dbUser.id)
                             .single();
+                        
+                        console.log(`   Stats query result:`, { stats, statsError });
                             
-                        if (stats) {
+                        if (stats && stats.gda_units !== null && stats.gda_units !== undefined) {
                             const newTotalUnits = stats.gda_units; // This was updated by the trigger!
                             console.log(`   Current GDA Units (from DB): ${newTotalUnits}`);
                             
                             // Call the contract
+                            console.log(`   Calling updateMemberUnits(${walletAddress}, ${newTotalUnits})...`);
                             const txResult = await updateMemberUnits(walletAddress, newTotalUnits);
                             
                             if (txResult.success) {
@@ -256,6 +265,8 @@ async function processEvent(event: any) {
                             } else {
                                 console.error(`❌ Failed to update on-chain units: ${txResult.error}`);
                             }
+                        } else {
+                            console.error(`❌ Could not fetch user stats or gda_units is null. Error:`, statsError);
                         }
                     } else {
                         console.log('⚠️ User has no embedded wallet - skipping on-chain update');
