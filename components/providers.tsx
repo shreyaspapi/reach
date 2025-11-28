@@ -1,22 +1,18 @@
 "use client"
+import { AuthKitProvider } from "@farcaster/auth-kit";
+import "@farcaster/auth-kit/styles.css";
+import React from "react";
 
-import { PrivyProvider } from "@privy-io/react-auth"
-import React from "react"
+const config = {
+    rpcUrl: "https://mainnet.optimism.io",
+    domain: "reach.social",
+    siweUri: "https://reach.social/login",
+};
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <PrivyProvider
-            appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
-            config={{
-                appearance: {
-                    theme: "light",
-                    accentColor: "#0047BB",
-                    logo: "/reach-logo.png",
-                },
-                loginMethods: ['twitter', 'farcaster'],
-            }}
-        >
+        <AuthKitProvider config={config}>
             {children}
-        </PrivyProvider>
-    )
+        </AuthKitProvider>
+    );
 }

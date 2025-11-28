@@ -1,20 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { TwitterIcon } from "lucide-react"
-import { usePrivy } from "@privy-io/react-auth"
+import { SignInButton, useProfile } from "@farcaster/auth-kit"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 export default function LoginPage() {
-  const { login, authenticated, ready } = usePrivy()
+  const { isAuthenticated, profile } = useProfile()
   const router = useRouter()
 
   useEffect(() => {
-    if (ready && authenticated) {
+    if (isAuthenticated) {
       router.push("/dashboard")
     }
-  }, [ready, authenticated, router])
+  }, [isAuthenticated, router])
 
   return (
     <main className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden h-screen">
@@ -61,43 +60,21 @@ export default function LoginPage() {
               {/* Corner Brackets - Bottom Right */}
               <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r-2 border-b-2 border-reach-blue pointer-events-none"></div>
             </div>
-          </div>
-        </div>
+            {/* CTA */}
+            <div className="space-y-4">
+              <div className="font-mono text-sm md:text-base max-w-md mx-auto leading-relaxed mt-12">
+                ACCESS YOUR STREAM. TRACK YOUR POINTS.
+                {/* Hatched badge for important text */}
+                <span className="bg-reach-blue text-reach-paper px-2 bg-crosshatch inline-block relative ml-2">
+                  <span className="relative bg-reach-blue px-1">IDENTITY VERIFICATION REQUIRED.</span>
+                </span>
+              </div>
 
-        {/* CTA */}
-        <div className="space-y-4">
-          <div className="font-mono text-sm md:text-base max-w-md mx-auto leading-relaxed">
-            The SocialFi Layer for the New Internet.
-            <br />
-            <span className="opacity-70">Where attention meets DeFi yield.</span>
-            {/* Hatched badge for important text */}
-            <div className="mt-4">
-              <span className="bg-reach-blue text-reach-paper px-2 bg-crosshatch inline-block relative">
-                <span className="relative bg-reach-blue px-1 font-bold">Identity Verification Required</span>
-              </span>
+              {/* Button with sketchy borders and construction lines */}
+              <div className="mt-8 flex justify-center">
+                <SignInButton />
+              </div>
             </div>
-          </div>
-
-          {/* Button with sketchy borders and construction lines */}
-          <button
-            onClick={login}
-            className="group relative inline-flex items-center justify-center px-8 py-4 bg-transparent overflow-hidden transition-all hover:bg-reach-blue cursor-pointer border-sketchy guide-corners"
-          >
-            <span className="absolute inset-1 border border-reach-blue border-dashed group-hover:border-reach-paper/30 opacity-60"></span>
-
-            <div className="relative flex items-center gap-3">
-              <TwitterIcon className="w-5 h-5 text-reach-blue group-hover:text-reach-paper transition-colors" />
-              <span className="font-mono font-bold text-lg text-reach-blue group-hover:text-reach-paper transition-colors">
-                Connect
-              </span>
-            </div>
-          </button>
-
-          {/* Debug Button */}
-          <div className="pt-2">
-            <Link href="/dashboard" className="font-mono text-xs text-reach-blue/50 hover:text-reach-blue underline">
-              [DEBUG] Skip Login
-            </Link>
           </div>
         </div>
       </div>

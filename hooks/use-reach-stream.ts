@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { usePrivy } from '@privy-io/react-auth'
+import { useProfile } from '@farcaster/auth-kit'
 
 const SUPERFLUID_SUBGRAPH_URL = 'https://subgraph-endpoints.superfluid.dev/eth-sepolia/protocol-v1'
 const REACH_TOKEN_ADDRESS = '0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7'
@@ -16,14 +16,14 @@ interface PoolMemberData {
 }
 
 export function useReachStream() {
-    const { user } = usePrivy()
+    const { profile } = useProfile()
     const [data, setData] = useState<PoolMemberData | null>(null)
     const [flowRate, setFlowRate] = useState<bigint>(BigInt(0))
     const [balance, setBalance] = useState<string>("0")
     const [loading, setLoading] = useState(true)
 
     const fetchStreamData = useCallback(async () => {
-        const walletAddress = user?.wallet?.address
+        const walletAddress = profile?.verifications?.[0] || profile?.custody
         if (!walletAddress) return
 
         const query = `
@@ -63,12 +63,12 @@ export function useReachStream() {
 
             if (member) {
                 setData(member)
-                
+
                 // Calculate flow rate for this member: PoolFlowRate * (MemberUnits / TotalUnits)
                 const poolFlowRate = BigInt(member.pool.flowRate)
                 const memberUnits = BigInt(member.units)
                 const totalUnits = BigInt(member.pool.totalUnits)
-                
+
                 if (totalUnits > BigInt(0)) {
                     const memberFlowRate = (poolFlowRate * memberUnits) / totalUnits
                     setFlowRate(memberFlowRate)
@@ -79,7 +79,7 @@ export function useReachStream() {
         } finally {
             setLoading(false)
         }
-    }, [user?.wallet?.address])
+    }, [profile])
 
     useEffect(() => {
         fetchStreamData()
@@ -96,12 +96,12 @@ export function useReachStream() {
             const now = Date.now()
             const updatedAt = parseInt(data.updatedAtTimestamp) * 1000
             const timeDiff = BigInt(Math.max(0, now - updatedAt))
-            
+
             const totalStreamed = BigInt(data.totalAmountReceivedUntilUpdatedAt)
             // flowRate is per second, so we multiply by ms and divide by 1000
             const accrued = (timeDiff * flowRate) / BigInt(1000)
             const currentBalance = totalStreamed + accrued
-            
+
             // Convert to formatted string (18 decimals)
             const balanceInEther = Number(currentBalance) / 1e18
             setBalance(balanceInEther.toFixed(6))
