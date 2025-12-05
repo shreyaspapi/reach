@@ -13,7 +13,7 @@ import { useEffect, useState } from "react"
 
 export default function DashboardPage() {
     const { isAuthenticated, profile } = useProfile()
-    const { signOut } = useSignIn()
+    const { signOut } = useSignIn({})
     const router = useRouter()
     const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
 

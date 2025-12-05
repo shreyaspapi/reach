@@ -1,0 +1,24 @@
+{
+    "name": "Reach",
+    "short_name": "Reach",
+    "description": "The Currency of Attention - Stream your engagement rewards",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#F9F8F4",
+    "theme_color": "#0047BB",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "any",
+            "type": "image/x-icon"
+        }
+    ],
+    "farcaster": {
+        "version": "1",
+        "manifestVersion": "1",
+        "homeUrl": "/",
+        "iconUrl": "/favicon.ico",
+        "splashImageUrl": "/reach-logo.png",
+        "splashBackgroundColor": "#F9F8F4"
+    }
+}

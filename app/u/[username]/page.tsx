@@ -228,7 +228,7 @@ export default function PublicProfilePage() {
                                         rel="noopener noreferrer"
                                         className="ml-auto flex items-center gap-1 hover:text-reach-blue hover:underline"
                                     >
-                                        View on Warpcast <ExternalLink className="w-3 h-3" />
+                                        View on Farcaster <ExternalLink className="w-3 h-3" />
                                     </a>
                                 </div>
                             </div>
