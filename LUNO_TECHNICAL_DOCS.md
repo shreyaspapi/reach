@@ -107,10 +107,10 @@ EXECUTE FUNCTION update_user_stats();
 
 ## 7. Team
 
-* Shreyas ([@spapinwar](https://x.com/spapinwar))
+* Shreyas - [@spapinwar](https://x.com/spapinwar)
 
-* Hardik ([@Avadam21](https://x.com/Avadam21))
+* Hardik - [@Avadam21](https://x.com/Avadam21)
 
-* Uddalak ([@ninja_writer21](https://x.com/ninja_writer21))
+* Uddalak - [@ninja_writer21](https://x.com/ninja_writer21)
 
-* Anish ([@anishbuilds](https://x.com/anishbuilds))
+* Anish - [@anishbuilds](https://x.com/anishbuilds)
