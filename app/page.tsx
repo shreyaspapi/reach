@@ -18,17 +18,18 @@ export default function LoginPage() {
   return (
     <main className="flex flex-col items-center justify-between min-h-screen px-6 py-8 safe-area-inset">
       {/* Top section with badge and docs link */}
-      <div className="w-full flex justify-between items-center pt-4 px-4">
-        <Link 
-          href="/docs"
-          className="font-mono text-xs text-reach-blue/70 hover:text-reach-blue transition-colors uppercase tracking-widest"
-        >
-          Docs
-        </Link>
+      <div className="relative w-full flex items-center justify-center pt-4 px-4">
+        <div className="absolute right-4 top-4">
+          <Link
+            href="/docs"
+            className="inline-flex items-center gap-2 rounded-full border border-reach-blue/30 bg-reach-paper/80 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-reach-blue/80 shadow-sm backdrop-blur hover:border-reach-blue hover:text-reach-blue"
+          >
+            Docs
+          </Link>
+        </div>
         <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
           <span className="font-mono text-xs font-bold tracking-widest uppercase">Social Rewards</span>
         </div>
-        <div className="w-12"></div> {/* Spacer for centering */}
       </div>
       {/* Center section with logo and branding */}
       <div className="flex flex-1 flex-col items-center justify-center w-full max-w-sm mx-auto gap-12">
