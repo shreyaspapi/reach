@@ -27,6 +27,8 @@ export function ConnectedAccounts() {
                             username: profile.username,
                             display_name: profile.displayName,
                             pfp_url: profile.pfpUrl,
+                            follower_count: (profile as any).followerCount,
+                            following_count: (profile as any).followingCount,
                             wallet_address: walletAddress
                         }),
                     });
