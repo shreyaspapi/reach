@@ -3,14 +3,16 @@
 import { useProfile } from "@farcaster/auth-kit"
 import { Wallet, Copy, Check } from "lucide-react"
 import { useState, useEffect } from "react"
+import { normalizeAddress } from "@/lib/utils"
 
 export function ConnectedAccounts() {
     const { profile, isAuthenticated } = useProfile()
     const [copied, setCopied] = useState(false)
     const [isSynced, setIsSynced] = useState(false)
 
-    // Use the first verified address or custody address
-    const walletAddress = profile?.verifications?.[0] || profile?.custody
+    // Use the first verified address or custody address, ensuring it has 0x prefix
+    const rawAddress = profile?.verifications?.[0] || profile?.custody
+    const walletAddress = normalizeAddress(rawAddress)
 
     useEffect(() => {
         const syncUser = async () => {
@@ -106,6 +108,23 @@ export function ConnectedAccounts() {
                                 <span className="font-mono text-xs text-reach-blue/80 truncate">@{profile.username}</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Twitter Card - Coming Soon */}
+                <div className="bg-white/50 backdrop-blur-sm p-4 border-sketchy relative flex flex-col gap-2 opacity-60">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                            <span className="font-mono font-bold uppercase text-sm">Twitter</span>
+                        </div>
+                        <span className="text-xs font-mono bg-reach-blue/30 text-reach-blue px-2 py-0.5 rounded-full">Coming Soon</span>
+                    </div>
+
+                    <div className="mt-2 flex items-center justify-center py-4">
+                        <span className="font-mono text-xs text-reach-blue/60 italic">Twitter integration coming soon</span>
                     </div>
                 </div>
             </div>

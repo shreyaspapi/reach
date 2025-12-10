@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useProfile } from '@farcaster/auth-kit'
+import { normalizeAddress } from '@/lib/utils'
 
 const SUPERFLUID_SUBGRAPH_URL = 'https://subgraph-endpoints.superfluid.dev/eth-sepolia/protocol-v1'
 const LUNO_TOKEN_ADDRESS = '0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7'
@@ -23,7 +24,8 @@ export function useLunoStream() {
     const [loading, setLoading] = useState(true)
 
     const fetchStreamData = useCallback(async () => {
-        const walletAddress = profile?.verifications?.[0] || profile?.custody
+        const rawAddress = profile?.verifications?.[0] || profile?.custody
+        const walletAddress = normalizeAddress(rawAddress)
         if (!walletAddress) return
 
         const query = `
