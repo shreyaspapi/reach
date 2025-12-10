@@ -3,14 +3,42 @@
 import { useProfile } from "@farcaster/auth-kit"
 import { Wallet, Copy, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export function ConnectedAccounts() {
     const { profile, isAuthenticated } = useProfile()
     const [copied, setCopied] = useState(false)
+    const [isSynced, setIsSynced] = useState(false)
 
     // Use the first verified address or custody address
     const walletAddress = profile?.verifications?.[0] || profile?.custody
+
+    useEffect(() => {
+        const syncUser = async () => {
+            if (isAuthenticated && profile && !isSynced) {
+                try {
+                    await fetch('/api/user/sync', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            fid: profile.fid,
+                            username: profile.username,
+                            display_name: profile.displayName,
+                            pfp_url: profile.pfpUrl,
+                            wallet_address: walletAddress
+                        }),
+                    });
+                    setIsSynced(true);
+                } catch (error) {
+                    console.error('Failed to sync user:', error);
+                }
+            }
+        };
+
+        syncUser();
+    }, [isAuthenticated, profile, walletAddress, isSynced]);
 
     const copyAddress = () => {
         if (walletAddress) {

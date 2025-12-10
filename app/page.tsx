@@ -56,7 +56,7 @@ export default function LoginPage() {
 
         {/* Powered by indicator */}
         <p className="font-mono text-[10px] text-center text-reach-blue/50 tracking-wider uppercase">
-          Powered by Farcaster
+          Powered by Superfluid
         </p>
       </div>
     </main>

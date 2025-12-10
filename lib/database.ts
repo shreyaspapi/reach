@@ -20,6 +20,7 @@ export async function getOrCreateUser(userData: {
     following_count?: number;
     power_badge?: boolean;
     privy_user_id?: string;
+    wallet_address?: string;
 }): Promise<User | null> {
     if (!supabaseAdmin) {
         console.error('Supabase admin client not initialized');
@@ -45,6 +46,7 @@ export async function getOrCreateUser(userData: {
                     follower_count: userData.follower_count,
                     following_count: userData.following_count,
                     power_badge: userData.power_badge,
+                    wallet_address: userData.wallet_address,
                     updated_at: new Date().toISOString()
                 })
                 .eq('fid', userData.fid)
