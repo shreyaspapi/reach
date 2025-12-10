@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useProfile } from '@farcaster/auth-kit'
 
 const SUPERFLUID_SUBGRAPH_URL = 'https://subgraph-endpoints.superfluid.dev/eth-sepolia/protocol-v1'
-const REACH_TOKEN_ADDRESS = '0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7'
+const LUNO_TOKEN_ADDRESS = '0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7'
 const POOL_ADDRESS = '0x2cc199976b4acbe4211e943c1e7f070d76570d4e'
 
 interface PoolMemberData {
@@ -15,7 +15,7 @@ interface PoolMemberData {
     }
 }
 
-export function useReachStream() {
+export function useLunoStream() {
     const { profile } = useProfile()
     const [data, setData] = useState<PoolMemberData | null>(null)
     const [flowRate, setFlowRate] = useState<bigint>(BigInt(0))
