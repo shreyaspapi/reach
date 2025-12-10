@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@farcaster/auth-kit'],
+  transpilePackages: ['@farcaster/auth-kit', '@farcaster/miniapp-sdk'],
   serverExternalPackages: [
     'pino',
     'thread-stream',
