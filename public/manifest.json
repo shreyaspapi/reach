@@ -1,0 +1,24 @@
+{
+    "name": "Luno",
+    "short_name": "Luno",
+    "description": "The Social Economy - Get rewarded for your engagement",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#F9F8F4",
+    "theme_color": "#0047BB",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "any",
+            "type": "image/x-icon"
+        }
+    ],
+    "farcaster": {
+        "version": "1",
+        "manifestVersion": "1",
+        "homeUrl": "/",
+        "iconUrl": "/favicon.ico",
+        "splashImageUrl": "/reach-logo.png",
+        "splashBackgroundColor": "#F9F8F4"
+    }
+}

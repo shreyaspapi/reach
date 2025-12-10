@@ -3,7 +3,7 @@ import { connectedUserFids } from '@/lib/backend';
 import { calculateEngagementScore, getUserHistory } from '@/lib/llm-scoring';
 import { getOrCreateUser, saveCast } from '@/lib/database';
 import { updateMemberUnits } from '@/lib/gda-contract';
-import { PrivyClient } from '@privy-io/server-auth';
+
 
 export async function GET(request: NextRequest) {
     console.log('Received GET request');
@@ -50,8 +50,8 @@ async function processEvent(event: any) {
             // 3. Cast that replies to @shreyaspapi
             const SHREYAS_FID = 830020;
             const isShreyasCast = authorFid === SHREYAS_FID;
-            const isMentionOrReply = 
-                cast.text?.includes('@shreyaspapi') || 
+            const isMentionOrReply =
+                cast.text?.includes('@shreyaspapi') ||
                 cast.mentioned_profiles?.some((p: any) => p.username === 'shreyaspapi') ||
                 cast.parent_author?.fid === SHREYAS_FID;
 
@@ -62,7 +62,7 @@ async function processEvent(event: any) {
 
             // Check if the user is registered with Privy
             const isRegistered = connectedUserFids.has(authorFid);
-            
+
             if (!isRegistered) {
                 console.log(`ℹ️  User @${cast.author.username} (FID: ${authorFid}) is not registered with Privy`);
                 console.log(`   Scoring cast anyway for future reference...`);
@@ -90,7 +90,7 @@ async function processEvent(event: any) {
             console.log(`   └─ Active Campaign (10%):       ${scoreResult.breakdown.activeCampaign}/100`);
             console.log('───────────────────────────────────────────────────');
             console.log(`🎯 TOTAL SCORE: ${scoreResult.totalScore}/100`);
-            
+
             // Display LLM reasoning if available
             if (scoreResult.reasoning) {
                 console.log('───────────────────────────────────────────────────');
@@ -101,7 +101,7 @@ async function processEvent(event: any) {
                 }
             }
             console.log('───────────────────────────────────────────────────');
-            
+
             if (userHistory) {
                 console.log('📈 USER STATISTICS:');
                 console.log(`   ├─ Total Casts: ${userHistory.castCount}`);
@@ -111,7 +111,7 @@ async function processEvent(event: any) {
 
             // Save to database
             console.log('💾 Saving to database...');
-            
+
             // Get or create user in database
             const dbUser = await getOrCreateUser({
                 fid: authorFid,
@@ -154,88 +154,44 @@ async function processEvent(event: any) {
                     console.log(`✅ Cast saved to database (ID: ${savedCast.id})`);
 
                     // TRIGGER ON-CHAIN UPDATE
-                    // Fetch the user's embedded wallet from Privy
-                    let walletAddress = dbUser.wallet_address;
-                    
-                    if (!walletAddress) {
-                        console.log('⛓️ Fetching embedded wallet from Privy...');
-                        try {
-                            const privyClient = new PrivyClient(
-                                process.env.PRIVY_APP_ID!,
-                                process.env.PRIVY_APP_SECRET!
-                            );
-                            
-                            // Get all users and find the one with this FID
-                            const users = await privyClient.getUsers();
-                            const privyUser = users.find(u => 
-                                u.linkedAccounts.some((acc: any) => 
-                                    acc.type === 'farcaster' && acc.fid === authorFid
-                                )
-                            );
-                            
-                            if (privyUser) {
-                                console.log(`🔍 Inspecting linked accounts for user ${privyUser.id}:`);
-                                privyUser.linkedAccounts.forEach(acc => {
-                                    console.log(`   - Type: ${acc.type}, Details: ${JSON.stringify(acc)}`);
-                                });
-
-                                // Try to find ANY wallet first
-                                // Prioritize 'privy' wallets, but fallback to any wallet
-                                const wallets = privyUser.linkedAccounts.filter((acc: any) => acc.type === 'wallet');
-                                const embeddedWallet = wallets.find((acc: any) => acc.walletClientType === 'privy') || wallets[0];
-                                
-                                if (embeddedWallet && 'address' in embeddedWallet) {
-                                    walletAddress = (embeddedWallet as any).address;
-                                    console.log(`✅ Found wallet address: ${walletAddress}`);
-                                    
-                                    // Update DB with wallet address for future use
-                                    const { createClient } = require('@supabase/supabase-js');
-                                    const supabase = createClient(
-                                        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                                        process.env.SUPABASE_SERVICE_ROLE_KEY!
-                                    );
-                                    await supabase
-                                        .from('users')
-                                        .update({ wallet_address: walletAddress })
-                                        .eq('id', dbUser.id);
-                                }
-                            }
-                        } catch (privyError) {
-                            console.error('Error fetching Privy user:', privyError);
-                        }
+                    const walletAddress = dbUser.wallet_address;
+                    if (walletAddress) {
+                        console.log(`✅ Found wallet address in DB: ${walletAddress}`);
+                    } else {
+                        console.log('⚠️ User has no wallet address in DB - skipping on-chain update');
                     }
-                    
+
                     if (walletAddress) {
                         console.log('⛓️ Triggering on-chain unit update...');
-                        
+
                         // Fetch current GDA units from DB (or contract, but DB is faster cache)
                         // For now, we'll just ADD the new score to the existing units
                         // In a real app, you might want to fetch the *current* on-chain units first to be safe
-                        
+
                         // Calculate new total units
                         // dbUser.gda_units should have been updated by the trigger, but let's be safe and assume we add score
                         // Note: The DB trigger `update_user_stats` runs AFTER insert.
                         // We can query the updated stats or just pass score.
-                        
+
                         // Let's fetch the latest stats to get the ACCUMULATED score
                         // (Since GDA units = total accumulated score)
                         // Alternatively, we can just pass the *new total* if we had it.
-                        
+
                         // Simple approach: Get the user's total accumulated score from the DB
                         // (which acts as the unit count)
                         // We need to fetch the user_stats table.
-                        
+
                         // For this MVP, let's assume we want to add the CURRENT CAST'S SCORE to their units.
                         // But `updateMemberUnits` sets the *absolute* value, not relative.
                         // So we need Total Score.
-                        
+
                         // We can't easily get the fresh stats here without another DB call.
                         // Let's rely on the return value of `saveCast`? No, that returns the cast.
-                        
+
                         // Let's query user_stats for this user.
                         // (Implementation detail: We need to import supabase client here or add a helper)
                         // For now, let's do a "blind" add if we can't query, OR add a helper.
-                        
+
                         // Better: Update `saveCast` or `getOrCreateUser` to return stats? 
                         // Let's just import the supabase client here for a quick read.
                         const { createClient } = require('@supabase/supabase-js');
@@ -243,23 +199,23 @@ async function processEvent(event: any) {
                             process.env.NEXT_PUBLIC_SUPABASE_URL!,
                             process.env.SUPABASE_SERVICE_ROLE_KEY!
                         );
-                        
+
                         const { data: stats, error: statsError } = await supabase
                             .from('user_stats')
                             .select('gda_units')
                             .eq('user_id', dbUser.id)
                             .single();
-                        
+
                         console.log(`   Stats query result:`, { stats, statsError });
-                            
+
                         if (stats && stats.gda_units !== null && stats.gda_units !== undefined) {
                             const newTotalUnits = stats.gda_units; // This was updated by the trigger!
                             console.log(`   Current GDA Units (from DB): ${newTotalUnits}`);
-                            
+
                             // Call the contract
                             console.log(`   Calling updateMemberUnits(${walletAddress}, ${newTotalUnits})...`);
                             const txResult = await updateMemberUnits(walletAddress, newTotalUnits);
-                            
+
                             if (txResult.success) {
                                 console.log(`✅ On-chain units updated! Tx: ${txResult.txHash}`);
                             } else {
@@ -276,12 +232,12 @@ async function processEvent(event: any) {
                     console.log('ℹ️  Cast already exists or failed to save');
                 }
             }
-            
+
             console.log('═══════════════════════════════════════════════════\n');
 
             // TODO: Trigger Superfluid stream based on score
             // TODO: Update user rewards/points
-            
+
             // Example: You can use the score to determine reward amount
             // const rewardAmount = calculateReward(scoreResult.totalScore);
             // await updateUserRewards(authorFid, rewardAmount);

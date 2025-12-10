@@ -7,34 +7,35 @@ import { PointsList } from "@/components/points-list"
 import { CampaignCard } from "@/components/campaign-card"
 import { ConnectedAccounts } from "@/components/connected-accounts"
 import { EngagementHistory } from "@/components/engagement-history"
-import { usePrivy } from "@privy-io/react-auth"
+import { useProfile, useSignIn } from "@farcaster/auth-kit"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function DashboardPage() {
-    const { logout, authenticated, ready } = usePrivy()
+    const { isAuthenticated, profile } = useProfile()
+    const { signOut } = useSignIn({})
     const router = useRouter()
     const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
 
     useEffect(() => {
-        if (ready && !authenticated) {
+        if (!isAuthenticated) {
             router.push("/")
         }
-    }, [ready, authenticated, router])
+    }, [isAuthenticated, router])
 
     const handleLogout = async () => {
-        await logout()
+        await signOut()
         router.push("/")
     }
 
-    if (!ready || !authenticated) return null
+    if (!isAuthenticated) return null
 
     return (
         <div className="min-h-screen flex flex-col max-w-5xl mx-auto w-full">
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 p-4 md:p-8 flex justify-between items-start pointer-events-none">
                 <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative">
-                    <h1 className="font-display text-2xl md:text-3xl text-reach-blue leading-none font-extrabold">Reach</h1>
+                    <h1 className="font-display text-2xl md:text-3xl text-reach-blue leading-none font-extrabold">Luno</h1>
                     <p className="font-mono text-[10px] font-bold uppercase tracking-widest mt-1">
                         Personal Ledger • <span className="bg-reach-blue text-reach-paper px-1 bg-crosshatch relative"><span className="bg-reach-blue px-1 relative">Live</span></span>
                     </p>
@@ -47,14 +48,6 @@ export default function DashboardPage() {
                     >
                         <Globe className="w-5 h-5" />
                         <span className="font-mono text-xs font-bold hidden md:inline">Explore</span>
-                    </Link>
-
-                    <Link
-                        href="/tradbtc"
-                        className="p-2 bg-reach-paper/80 backdrop-blur-sm hover:bg-reach-blue hover:text-reach-paper transition-colors border-sketchy cursor-pointer flex items-center gap-2"
-                    >
-                        <Wallet className="w-5 h-5" />
-                        <span className="font-mono text-xs font-bold hidden md:inline">TradBTC</span>
                     </Link>
 
                     <button
@@ -85,7 +78,7 @@ export default function DashboardPage() {
                                 <div className="scale-125 origin-center py-8">
                                     <StreamCounter />
                                 </div>
-                                <p className="font-mono text-xs mt-4 opacity-60">$REACH</p>
+                                <p className="font-mono text-xs mt-4 opacity-60">$LUNO</p>
                             </div>
 
                             {/* Decorative corners */}
@@ -95,7 +88,7 @@ export default function DashboardPage() {
 
                         <div className="mt-8 text-center">
                             <p className="font-mono text-xs max-w-md mx-auto leading-relaxed opacity-80 italic">
-                                "Compound interest is the eighth wonder of the world. He who understands it, earns it."
+                                "Your community is your currency. Every interaction flows value back to you."
                             </p>
                         </div>
                     </div>
@@ -164,48 +157,7 @@ export default function DashboardPage() {
                                 </div>
                             </div>
 
-                            {/* DeFi Opportunities */}
-                            <div className="max-w-4xl mx-auto mt-16">
-                                <div className="flex items-center gap-4 mb-8 relative">
-                                    {/* Extended construction guide line */}
-                                    <div className="absolute left-0 right-0 h-px border-t border-dashed border-reach-blue/25 -mx-12"></div>
-                                    <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">DeFi Vaults</h2>
-                                    <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                </div>
 
-                                <Link href="/tradbtc" className="block group">
-                                    <div className="bg-reach-blue text-reach-paper p-8 border-double-thick border-reach-blue relative overflow-hidden transition-transform hover:-translate-y-1">
-                                        {/* Background Pattern */}
-                                        <div className="absolute inset-0 bg-crosshatch opacity-10"></div>
-
-                                        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                            <div>
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <h3 className="font-display text-2xl font-bold">TradBTC Alpha</h3>
-                                                    <span className="bg-reach-paper text-reach-blue px-2 py-0.5 text-[10px] font-mono font-bold">New</span>
-                                                </div>
-                                                <p className="font-mono text-sm opacity-80 max-w-lg">
-                                                    Institutional Bitcoin yields powered by Babylon & MSTR.
-                                                    <br />
-                                                    <span className="text-yellow-300 font-bold">Social Boost Active:</span> Your engagement score unlocks <span className="underline decoration-wavy">Bonus APY</span>.
-                                                </p>
-                                            </div>
-
-                                            <div className="flex items-center gap-4">
-                                                <div className="text-right">
-                                                    <p className="font-mono text-[10px] uppercase opacity-60">Current APY</p>
-                                                    <p className="font-display text-3xl font-bold">12.4%</p>
-                                                </div>
-                                                <div className="h-10 w-px bg-reach-paper/20"></div>
-                                                <div className="bg-reach-paper text-reach-blue px-4 py-2 font-mono text-sm font-bold hover:bg-white transition-colors">
-                                                    Deposit BTC
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
 
                             {/* Campaigns */}
                             <div className="max-w-4xl mx-auto pb-24 mt-16">
@@ -223,8 +175,8 @@ export default function DashboardPage() {
                                         creator="Shreyas Papinwar"
                                         xHandle="@spapinwar"
                                         farcasterHandle="@shreyaspapi"
-                                        description="Shreyas LOVES attention. Seriously. Tweet at him, cast at him, meme him, roast him—anything you do to @spapinwar on X or @shreyaspapi on Farcaster earns you $REACH, streamed directly into your wallet via Superfluid. The more chaotic (yet relevant), the higher your score. Help Shreyas achieve his final form: a man drowning in notifications."
-                                        reward="Users earn $REACH tokens in real‑time streams based on their AI‑evaluated engagement."
+                                        description="Shreyas LOVES attention. Seriously. Tweet at him, cast at him, meme him, roast him—anything you do to @spapinwar on X or @shreyaspapi on Farcaster earns you $LUNO, streamed directly into your wallet via Superfluid. The more chaotic (yet relevant), the higher your score. Help Shreyas achieve his final form: a man drowning in notifications."
+                                        reward="Users earn $LUNO tokens in real‑time streams based on their AI‑evaluated engagement."
                                         status="Active"
                                     />
                                 </div>
@@ -237,7 +189,7 @@ export default function DashboardPage() {
                                         <p className="font-bold">Deployed Contracts (Sepolia)</p>
                                         <div className="flex flex-col gap-1">
                                             <div className="flex gap-2">
-                                                <span>REACH Supertoken:</span>
+                                                <span>LUNO Supertoken:</span>
                                                 <a href="https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-reach-blue decoration-wavy">
                                                     0xE58C...31a7
                                                 </a>

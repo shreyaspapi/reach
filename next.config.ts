@@ -1,13 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@privy-io/react-auth'],
+  transpilePackages: [
+    '@farcaster/auth-kit',
+    '@farcaster/auth-client', 
+    '@farcaster/miniapp-sdk',
+    '@farcaster/quick-auth',
+    'viem',
+  ],
   serverExternalPackages: [
     'pino',
     'thread-stream',
     '@walletconnect/ethereum-provider',
-    '@privy-io/server-auth',
   ],
+  webpack: (config) => {
+    config.externals.push('pino-pretty', 'lokijs', 'encoding');
+    return config;
+  },
   turbopack: {},
 };
 

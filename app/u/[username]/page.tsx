@@ -142,7 +142,7 @@ export default function PublicProfilePage() {
                     {/* Score Card */}
                     <div className="bg-reach-blue text-reach-paper p-6 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-crosshatch opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                        <h3 className="relative z-10 font-mono text-xs uppercase tracking-widest opacity-70 mb-2">Reach Score</h3>
+                        <h3 className="relative z-10 font-mono text-xs uppercase tracking-widest opacity-70 mb-2">Luno Score</h3>
                         <div className="relative z-10 flex items-baseline gap-2">
                             <span className="font-display text-6xl font-bold">{stats.average_score.toFixed(0)}</span>
                             <span className="font-mono text-lg opacity-50">/100</span>
@@ -161,7 +161,7 @@ export default function PublicProfilePage() {
                             <span className="font-mono text-lg opacity-50">UNITS</span>
                         </div>
                         <p className="mt-2 font-mono text-xs text-reach-blue/60">
-                            These units determine the real-time stream rate of $REACH tokens.
+                            These units determine the real-time stream rate of $LUNO tokens.
                         </p>
                     </div>
 
@@ -228,7 +228,7 @@ export default function PublicProfilePage() {
                                         rel="noopener noreferrer"
                                         className="ml-auto flex items-center gap-1 hover:text-reach-blue hover:underline"
                                     >
-                                        View on Warpcast <ExternalLink className="w-3 h-3" />
+                                        View on Farcaster <ExternalLink className="w-3 h-3" />
                                     </a>
                                 </div>
                             </div>
@@ -236,7 +236,7 @@ export default function PublicProfilePage() {
 
                         {recentCasts.length === 0 && (
                             <div className="text-center py-12 border-2 border-dashed border-reach-blue/20">
-                                <p className="font-mono text-reach-blue/50">No recent activity recorded on Reach.</p>
+                                <p className="font-mono text-reach-blue/50">No recent activity recorded on Luno.</p>
                             </div>
                         )}
                     </div>
