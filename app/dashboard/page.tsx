@@ -35,7 +35,7 @@ export default function DashboardPage() {
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 p-4 md:p-8 flex justify-between items-start pointer-events-none">
                 <div className="pointer-events-auto bg-reach-paper/80 backdrop-blur-sm p-2 border-sketchy relative">
-                    <h1 className="font-display text-2xl md:text-3xl text-reach-blue leading-none font-extrabold">Reach</h1>
+                    <h1 className="font-display text-2xl md:text-3xl text-reach-blue leading-none font-extrabold">Luno</h1>
                     <p className="font-mono text-[10px] font-bold uppercase tracking-widest mt-1">
                         Personal Ledger • <span className="bg-reach-blue text-reach-paper px-1 bg-crosshatch relative"><span className="bg-reach-blue px-1 relative">Live</span></span>
                     </p>
@@ -78,7 +78,7 @@ export default function DashboardPage() {
                                 <div className="scale-125 origin-center py-8">
                                     <StreamCounter />
                                 </div>
-                                <p className="font-mono text-xs mt-4 opacity-60">$REACH</p>
+                                <p className="font-mono text-xs mt-4 opacity-60">$LUNO</p>
                             </div>
 
                             {/* Decorative corners */}
@@ -88,7 +88,7 @@ export default function DashboardPage() {
 
                         <div className="mt-8 text-center">
                             <p className="font-mono text-xs max-w-md mx-auto leading-relaxed opacity-80 italic">
-                                "Compound interest is the eighth wonder of the world. He who understands it, earns it."
+                                "Your community is your currency. Every interaction flows value back to you."
                             </p>
                         </div>
                     </div>
@@ -175,8 +175,8 @@ export default function DashboardPage() {
                                         creator="Shreyas Papinwar"
                                         xHandle="@spapinwar"
                                         farcasterHandle="@shreyaspapi"
-                                        description="Shreyas LOVES attention. Seriously. Tweet at him, cast at him, meme him, roast him—anything you do to @spapinwar on X or @shreyaspapi on Farcaster earns you $REACH, streamed directly into your wallet via Superfluid. The more chaotic (yet relevant), the higher your score. Help Shreyas achieve his final form: a man drowning in notifications."
-                                        reward="Users earn $REACH tokens in real‑time streams based on their AI‑evaluated engagement."
+                                        description="Shreyas LOVES attention. Seriously. Tweet at him, cast at him, meme him, roast him—anything you do to @spapinwar on X or @shreyaspapi on Farcaster earns you $LUNO, streamed directly into your wallet via Superfluid. The more chaotic (yet relevant), the higher your score. Help Shreyas achieve his final form: a man drowning in notifications."
+                                        reward="Users earn $LUNO tokens in real‑time streams based on their AI‑evaluated engagement."
                                         status="Active"
                                     />
                                 </div>
@@ -189,7 +189,7 @@ export default function DashboardPage() {
                                         <p className="font-bold">Deployed Contracts (Sepolia)</p>
                                         <div className="flex flex-col gap-1">
                                             <div className="flex gap-2">
-                                                <span>REACH Supertoken:</span>
+                                                <span>LUNO Supertoken:</span>
                                                 <a href="https://sepolia.etherscan.io/address/0xe58c945fbb1f2c5e7398f1a4b9538f52778b31a7" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-reach-blue decoration-wavy">
                                                     0xE58C...31a7
                                                 </a>

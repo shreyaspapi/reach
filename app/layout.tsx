@@ -3,21 +3,21 @@ import "./globals.css";
 import Providers from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: "Reach - The Currency of Attention",
-  description: "Stream your engagement rewards. Track your points. Get paid for attention.",
+  title: "Luno - The Social Economy",
+  description: "Get rewarded for your social engagement. Real-time token streams for every meaningful interaction.",
   manifest: "/manifest.json",
   openGraph: {
-    title: "Reach - The Currency of Attention",
-    description: "Stream your engagement rewards. Track your points. Get paid for attention.",
+    title: "Luno - The Social Economy",
+    description: "Get rewarded for your social engagement. Real-time token streams for every meaningful interaction.",
     images: ["/reach-logo.png"],
   },
   other: {
     // Farcaster Frame metadata
     "fc:frame": "vNext",
     "fc:frame:image": "/reach-logo.png",
-    "fc:frame:button:1": "Launch Reach",
+    "fc:frame:button:1": "Launch Luno",
     "fc:frame:button:1:action": "link",
-    "fc:frame:button:1:target": process.env.NEXT_PUBLIC_APP_URL || "https://reach.sh",
+    "fc:frame:button:1:target": process.env.NEXT_PUBLIC_APP_URL || "https://luno.social",
   },
 };
 

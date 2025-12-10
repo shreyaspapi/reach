@@ -2,7 +2,6 @@
 
 import { useProfile } from "@farcaster/auth-kit"
 import { Wallet, Copy, Check } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 
 export function ConnectedAccounts() {

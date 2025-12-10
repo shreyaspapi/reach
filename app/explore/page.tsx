@@ -70,7 +70,7 @@ export default function ExplorePage() {
                             Explore
                         </h1>
                         <p className="font-mono text-lg md:text-xl text-reach-blue/80 mt-2 max-w-2xl">
-                            Discover top performing users. <span className="font-bold bg-yellow-200/50 px-1">Higher Reach Score = Higher Yields.</span>
+                            Discover top performing users. <span className="font-bold bg-yellow-200/50 px-1">Higher Luno Score = Higher Yields.</span>
                         </p>
                     </div>
                 </div>
