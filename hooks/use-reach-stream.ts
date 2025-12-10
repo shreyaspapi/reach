@@ -24,8 +24,29 @@ export function useLunoStream() {
     const [loading, setLoading] = useState(true)
 
     const fetchStreamData = useCallback(async () => {
-        const rawAddress = profile?.verifications?.[0] || profile?.custody
-        const walletAddress = normalizeAddress(rawAddress)
+        // Find the first Ethereum address from verifications or custody
+        // Filter out Solana addresses and other non-Ethereum addresses
+        const findEthereumAddress = () => {
+            // Check verifications array first (these are usually Ethereum addresses)
+            if (profile?.verifications && Array.isArray(profile.verifications)) {
+                for (const addr of profile.verifications) {
+                    const normalized = normalizeAddress(addr)
+                    if (normalized) {
+                        return normalized
+                    }
+                }
+            }
+            // Fallback to custody address if it's a valid Ethereum address
+            if (profile?.custody) {
+                const normalized = normalizeAddress(profile.custody)
+                if (normalized) {
+                    return normalized
+                }
+            }
+            return undefined
+        }
+        
+        const walletAddress = findEthereumAddress()
         if (!walletAddress) return
 
         const query = `

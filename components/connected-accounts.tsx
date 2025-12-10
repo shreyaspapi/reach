@@ -10,9 +10,29 @@ export function ConnectedAccounts() {
     const [copied, setCopied] = useState(false)
     const [isSynced, setIsSynced] = useState(false)
 
-    // Use the first verified address or custody address, ensuring it has 0x prefix
-    const rawAddress = profile?.verifications?.[0] || profile?.custody
-    const walletAddress = normalizeAddress(rawAddress)
+    // Find the first Ethereum address from verifications or custody
+    // Filter out Solana addresses and other non-Ethereum addresses
+    const findEthereumAddress = () => {
+      // Check verifications array first (these are usually Ethereum addresses)
+      if (profile?.verifications && Array.isArray(profile.verifications)) {
+        for (const addr of profile.verifications) {
+          const normalized = normalizeAddress(addr)
+          if (normalized) {
+            return normalized
+          }
+        }
+      }
+      // Fallback to custody address if it's a valid Ethereum address
+      if (profile?.custody) {
+        const normalized = normalizeAddress(profile.custody)
+        if (normalized) {
+          return normalized
+        }
+      }
+      return undefined
+    }
+    
+    const walletAddress = findEthereumAddress()
 
     useEffect(() => {
         const syncUser = async () => {

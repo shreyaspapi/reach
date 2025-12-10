@@ -3,6 +3,7 @@ import { connectedUserFids } from '@/lib/backend';
 import { calculateEngagementScore, getUserHistory } from '@/lib/llm-scoring';
 import { getOrCreateUser, saveCast } from '@/lib/database';
 import { updateMemberUnits } from '@/lib/gda-contract';
+import { isValidEthereumAddress } from '@/lib/utils';
 
 
 export async function GET(request: NextRequest) {
@@ -155,13 +156,21 @@ async function processEvent(event: any) {
 
                     // TRIGGER ON-CHAIN UPDATE
                     const walletAddress = dbUser.wallet_address;
-                    if (walletAddress) {
-                        console.log(`✅ Found wallet address in DB: ${walletAddress}`);
+                    
+                    // Validate that the wallet address is a valid Ethereum address
+                    // (not Solana or other chain addresses)
+                    const isValidAddress = walletAddress && isValidEthereumAddress(walletAddress);
+                    
+                    if (walletAddress && !isValidAddress) {
+                        console.log(`⚠️ Wallet address in DB is not a valid Ethereum address: ${walletAddress}`);
+                        console.log('   (This might be a Solana or other chain address - skipping on-chain update)');
+                    } else if (walletAddress && isValidAddress) {
+                        console.log(`✅ Found valid Ethereum wallet address in DB: ${walletAddress}`);
                     } else {
                         console.log('⚠️ User has no wallet address in DB - skipping on-chain update');
                     }
 
-                    if (walletAddress) {
+                    if (walletAddress && isValidAddress) {
                         console.log('⛓️ Triggering on-chain unit update...');
 
                         // Fetch current GDA units from DB (or contract, but DB is faster cache)
