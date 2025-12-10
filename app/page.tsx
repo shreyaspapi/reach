@@ -15,30 +15,23 @@ export default function LoginPage() {
   }, [isAuthenticated, router])
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen px-6 py-8 safe-area-inset">
-      {/* Top section with badge */}
-      <div className="w-full flex justify-center pt-4">
-        <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
-          <span className="font-mono text-xs font-bold tracking-widest uppercase">Social Rewards</span>
-        </div>
-      </div>
-
+    <main className="flex min-h-screen flex-col items-center px-6 py-10 safe-area-inset">
       {/* Center section with logo and branding */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+      <div className="flex flex-1 flex-col items-center justify-center w-full max-w-sm mx-auto gap-12">
         {/* Logo with minimal frame */}
-        <div className="relative w-full max-w-xs mb-8">
+        <div className="relative w-full max-w-xs">
           {/* Simple corner brackets */}
           <div className="absolute -top-3 -left-3 w-6 h-6 border-l-2 border-t-2 border-reach-blue" />
           <div className="absolute -top-3 -right-3 w-6 h-6 border-r-2 border-t-2 border-reach-blue" />
           <div className="absolute -bottom-3 -left-3 w-6 h-6 border-l-2 border-b-2 border-reach-blue" />
           <div className="absolute -bottom-3 -right-3 w-6 h-6 border-r-2 border-b-2 border-reach-blue" />
-          
+
           {/* Brand name */}
           <div className="text-center py-12">
-            <h1 className="font-display text-7xl md:text-8xl text-reach-blue font-extrabold tracking-tight">
+            <h1 className="font-display text-8xl md:text-9xl text-reach-blue font-extrabold tracking-tight">
               Luno
             </h1>
-            <p className="font-mono text-sm text-reach-blue/60 mt-2 tracking-widest uppercase">
+            <p className="font-mono text-base md:text-lg text-reach-blue/70 mt-3 tracking-[0.3em] uppercase">
               The Social Economy
             </p>
           </div>
@@ -46,6 +39,11 @@ export default function LoginPage() {
 
         {/* Value proposition */}
         <div className="text-center space-y-4 max-w-xs">
+          <div className="flex justify-center">
+            <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
+              <span className="font-mono text-xs font-bold tracking-widest uppercase">Social Rewards</span>
+            </div>
+          </div>
           <p className="font-mono text-sm text-reach-blue/90 leading-relaxed">
             Your engagement has value.<br />
             Get paid for every meaningful interaction.
@@ -56,16 +54,15 @@ export default function LoginPage() {
             <span className="w-8 h-px bg-reach-blue/30"></span>
           </div>
         </div>
-      </div>
 
-      {/* Bottom section with CTA */}
-      <div className="w-full max-w-xs space-y-6 pb-4">
         {/* Sign in button */}
         <div className="flex justify-center">
           <SignInButton />
         </div>
+      </div>
 
-        {/* Powered by indicator */}
+      {/* Footer */}
+      <div className="w-full max-w-xs pb-4">
         <p className="font-mono text-[10px] text-center text-reach-blue/50 tracking-wider uppercase">
           Powered by Superfluid × Farcaster
         </p>
