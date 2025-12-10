@@ -107,10 +107,38 @@ EXECUTE FUNCTION update_user_stats();
 
 ## 7. Team
 
-* Shreyas [@spapinwar](https://x.com/spapinwar)
+<div class="grid gap-4 md:grid-cols-2">
 
-* Hardik [@Avadam21](https://x.com/Avadam21)
+  <a href="https://x.com/spapinwar" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 border border-reach-blue/30 rounded-lg p-3 hover:bg-reach-blue/5 transition">
+    <img src="https://unavatar.io/x/spapinwar" alt="Shreyas" class="h-12 w-12 rounded-full border-2 border-reach-blue/30" />
+    <div>
+      <p class="font-semibold text-reach-blue leading-tight">Shreyas</p>
+      <p class="text-sm text-reach-blue/70 leading-tight">@spapinwar</p>
+    </div>
+  </a>
 
-* Uddalak [@ninja_writer21](https://x.com/ninja_writer21)
+  <a href="https://x.com/Avadam21" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 border border-reach-blue/30 rounded-lg p-3 hover:bg-reach-blue/5 transition">
+    <img src="https://unavatar.io/x/Avadam21" alt="Hardik" class="h-12 w-12 rounded-full border-2 border-reach-blue/30" />
+    <div>
+      <p class="font-semibold text-reach-blue leading-tight">Hardik</p>
+      <p class="text-sm text-reach-blue/70 leading-tight">@Avadam21</p>
+    </div>
+  </a>
 
-* Anish [@anishbuilds](https://x.com/anishbuilds)
+  <a href="https://x.com/ninja_writer21" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 border border-reach-blue/30 rounded-lg p-3 hover:bg-reach-blue/5 transition">
+    <img src="https://unavatar.io/x/ninja_writer21" alt="Uddalak" class="h-12 w-12 rounded-full border-2 border-reach-blue/30" />
+    <div>
+      <p class="font-semibold text-reach-blue leading-tight">Uddalak</p>
+      <p class="text-sm text-reach-blue/70 leading-tight">@ninja_writer21</p>
+    </div>
+  </a>
+
+  <a href="https://x.com/anishbuilds" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 border border-reach-blue/30 rounded-lg p-3 hover:bg-reach-blue/5 transition">
+    <img src="https://unavatar.io/x/anishbuilds" alt="Anish" class="h-12 w-12 rounded-full border-2 border-reach-blue/30" />
+    <div>
+      <p class="font-semibold text-reach-blue leading-tight">Anish</p>
+      <p class="text-sm text-reach-blue/70 leading-tight">@anishbuilds</p>
+    </div>
+  </a>
+
+</div>

@@ -26,6 +26,8 @@ export default function DocsPage() {
       })
       // Inline code
       .replace(/`([^`]+)`/gim, '<code class="bg-reach-blue/10 px-1.5 py-0.5 rounded font-mono text-sm">$1</code>')
+      // Markdown links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" class="text-reach-blue underline hover:text-reach-blue/80" target="_blank" rel="noopener noreferrer">$1</a>')
       // Bold
       .replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-reach-blue">$1</strong>')
       // Headers
@@ -140,17 +142,17 @@ export default function DocsPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-8 safe-area-inset">
+    <main className="min-h-screen px-6 pb-10 pt-14 md:pt-20 safe-area-inset">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between pt-6">
           <Link 
             href="/"
             className="font-mono text-sm text-reach-blue/70 hover:text-reach-blue transition-colors uppercase tracking-widest"
           >
             ← Back
           </Link>
-          <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
+          <div className="inline-block border-2 border-reach-blue px-5 py-2 bg-reach-blue text-reach-paper transform -rotate-1">
             <span className="font-mono text-xs font-bold tracking-widest uppercase">Technical Docs</span>
           </div>
         </div>

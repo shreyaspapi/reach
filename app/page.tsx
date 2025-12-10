@@ -27,9 +27,6 @@ export default function LoginPage() {
             Docs
           </Link>
         </div>
-        <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
-          <span className="font-mono text-xs font-bold tracking-widest uppercase">Social Rewards</span>
-        </div>
       </div>
       {/* Center section with logo and branding */}
       <div className="flex flex-1 flex-col items-center justify-center w-full max-w-sm mx-auto gap-12">
