@@ -3,6 +3,7 @@
 import { SignInButton, useProfile } from "@farcaster/auth-kit"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import Link from "next/link"
 
 export default function LoginPage() {
   const { isAuthenticated, profile } = useProfile()
@@ -15,7 +16,20 @@ export default function LoginPage() {
   }, [isAuthenticated, router])
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-6 py-10 safe-area-inset">
+    <main className="flex flex-col items-center justify-between min-h-screen px-6 py-8 safe-area-inset">
+      {/* Top section with badge and docs link */}
+      <div className="w-full flex justify-between items-center pt-4 px-4">
+        <Link 
+          href="/docs"
+          className="font-mono text-xs text-reach-blue/70 hover:text-reach-blue transition-colors uppercase tracking-widest"
+        >
+          Docs
+        </Link>
+        <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
+          <span className="font-mono text-xs font-bold tracking-widest uppercase">Social Rewards</span>
+        </div>
+        <div className="w-12"></div> {/* Spacer for centering */}
+      </div>
       {/* Center section with logo and branding */}
       <div className="flex flex-1 flex-col items-center justify-center w-full max-w-sm mx-auto gap-12">
         {/* Logo with minimal frame */}
