@@ -68,8 +68,15 @@ export default function LoginPage() {
         </div>
 
         {/* Sign in button */}
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-6">
           <SignInButton />
+          
+          <Link
+            href="/explore"
+            className="font-mono text-xs text-reach-blue/70 hover:text-reach-blue hover:underline decoration-wavy underline-offset-4 uppercase tracking-widest transition-colors"
+          >
+            View Leaderboard
+          </Link>
         </div>
       </div>
 
