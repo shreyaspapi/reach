@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjgzMDAyMCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDZFNTA5MjAxZTM0MENEMjRDMzVGMjM1ODAyRWUxZGUwNDRCMEYxNkYifQ",
+    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXIubHVuby5zb2NpYWwifQ",
+    "signature": "0x1bcbc6cd77c1ff54d277fb7ab641fc7e5e497c8d78f3f875dadf664adf4c6ecf67c2cd6551990632609a537b92ca72d3c8ca99d0e3d423c81bfb281735eb4c291c"
+  },
+  "frame": {
+    "version": "1",
+    "name": "Luno",
+    "iconUrl": "https://luno.social/favicon.ico",
+    "homeUrl": "https://luno.social",
+    "imageUrl": "https://luno.social/reach-logo.png",
+    "buttonTitle": "Launch Luno",
+    "splashImageUrl": "https://luno.social/reach-logo.png",
+    "splashBackgroundColor": "#F9F8F4",
+    "webhookUrl": "https://luno.social/api/webhook"
+  }
+}
