@@ -19,7 +19,7 @@ async function main() {
   console.log('--- Farcaster Manifest Signature Generator ---');
   
   // 1. Get Domain
-  const domain = await question('Enter your domain (e.g., luno.social): ');
+  const domain = await question('Enter your domain (e.g., farcaster.luno.social): ');
   
   // 2. Get FID
   const fidStr = await question('Enter your Farcaster FID: ');

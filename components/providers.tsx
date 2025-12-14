@@ -6,8 +6,8 @@ import React, { useEffect } from "react";
 
 const config = {
     rpcUrl: "https://mainnet.optimism.io",
-    domain: "luno.social",
-    siweUri: "https://luno.social/login",
+    domain: "farcaster.luno.social",
+    siweUri: "https://farcaster.luno.social/login",
 };
 
 // Component to handle Mini App SDK ready signal
