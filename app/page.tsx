@@ -32,9 +32,28 @@ export default function LoginPage() {
               
               console.log("Mini App Sign In Result:", result);
               
-              // Here you would typically send result.message and result.signature 
-              // to your backend to verify and create a session.
-              // For now, we'll just assume success and redirect.
+              // Verify the signature with our backend
+              const verifyRes = await fetch("/api/auth/verify", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  message: result.message,
+                  signature: result.signature,
+                  nonce,
+                  domain: "farcaster.luno.social",
+                }),
+              });
+
+              if (!verifyRes.ok) {
+                throw new Error("Verification failed");
+              }
+
+              const verifyData = await verifyRes.json();
+              console.log("Verified User:", verifyData);
+
+              // Redirect to dashboard upon success
               router.push("/dashboard")
           } catch (signInError) {
               console.error("Sign in rejected or failed", signInError);

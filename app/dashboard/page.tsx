@@ -133,7 +133,7 @@ export default function DashboardPage() {
         </div>
     )
 
-    if (!isAuthenticated) return null
+    if (!isAuthenticated && !isMiniApp) return null
 
     return (
         <div className="min-h-screen flex flex-col max-w-5xl mx-auto w-full">
