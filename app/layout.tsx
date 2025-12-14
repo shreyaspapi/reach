@@ -13,12 +13,21 @@ export const metadata: Metadata = {
     images: ["/reach-logo.png"],
   },
   other: {
-    // Farcaster Frame metadata
-    "fc:frame": "vNext",
-    "fc:frame:image": new URL("/reach-logo.png", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
-    "fc:frame:button:1": "Launch Luno",
-    "fc:frame:button:1:action": "link",
-    "fc:frame:button:1:target": process.env.NEXT_PUBLIC_APP_URL || "https://luno.social",
+    // Farcaster Frame metadata (v2 / Mini App)
+    "fc:frame": JSON.stringify({
+      version: "next",
+      imageUrl: new URL("/reach-logo.png", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
+      button: {
+        title: "Launch Luno",
+        action: {
+          type: "launch_frame",
+          name: "Luno",
+          url: process.env.NEXT_PUBLIC_APP_URL || "https://luno.social",
+          splashImageUrl: new URL("/reach-logo.png", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
+          splashBackgroundColor: "#F9F8F4"
+        }
+      }
+    }),
   },
 };
 

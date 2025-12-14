@@ -4,7 +4,7 @@
     "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXIubHVuby5zb2NpYWwifQ",
     "signature": "7hL6v1bA4548JGid1FkcxmxsaKBb1TKM5ZFAN8d3ya4YIEgJL1rp380j00nQ8+0uKFiqY/L9IClU8sdX9qF7ZBw="
   },
-  "frame": {
+  "miniapp": {
     "version": "1",
     "name": "Luno",
     "iconUrl": "https://luno.social/favicon.ico",
@@ -13,6 +13,16 @@
     "buttonTitle": "Launch Luno",
     "splashImageUrl": "https://luno.social/reach-logo.png",
     "splashBackgroundColor": "#F9F8F4",
-    "webhookUrl": "https://luno.social/api/webhook"
+    "webhookUrl": "https://luno.social/api/webhook",
+    "subtitle": "The Social Economy",
+    "description": "Get rewarded for your social engagement. Real-time token streams for every meaningful interaction.",
+    "screenshotUrls": [
+      "https://luno.social/reach-logo.png"
+    ],
+    "primaryCategory": "social",
+    "tags": ["social", "rewards", "token"],
+    "heroImageUrl": "https://luno.social/reach-logo.png",
+    "tagline": "Get paid to engage",
+    "castShareUrl": "https://luno.social/casts"
   }
 }
