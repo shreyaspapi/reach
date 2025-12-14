@@ -317,6 +317,10 @@ export default function CampaignPage() {
                                 <span className="opacity-60">Consistency</span>
                                 <span className="font-bold">{Math.round(campaign.consistency_weight * 100)}%</span>
                             </div>
+                            <div className="flex justify-between border-b border-reach-blue/10 pb-2">
+                                <span className="opacity-60">Active Campaign</span>
+                                <span className="font-bold">10%</span>
+                            </div>
                              <div className="flex justify-between pt-2">
                                 <span className="opacity-60">Reward Multiplier</span>
                                 <span className="font-bold text-green-600">{campaign.reward_multiplier}x</span>
