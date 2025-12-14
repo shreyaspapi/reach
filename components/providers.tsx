@@ -16,7 +16,13 @@ function MiniAppReady({ children }: { children: React.ReactNode }) {
         // Call ready() to hide the Farcaster splash screen
         const initMiniApp = async () => {
             try {
-                await sdk.actions.ready();
+                // Check if running in a frame context
+                const context = await sdk.context;
+                
+                // If context exists, we are in a Mini App
+                if (context && context.client) {
+                   await sdk.actions.ready();
+                }
             } catch (error) {
                 // If not running in a Mini App context, just proceed
                 console.log("Mini App SDK ready() called (may not be in Mini App context):", error);
