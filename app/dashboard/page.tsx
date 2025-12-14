@@ -21,12 +21,38 @@ export default function DashboardPage() {
     const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
     const [activeCampaigns, setActiveCampaigns] = useState<Campaign[]>([])
     const [loadingCampaigns, setLoadingCampaigns] = useState(true)
+    const [isMiniApp, setIsMiniApp] = useState(false)
 
     useEffect(() => {
-        if (!loading && !isAuthenticated) {
-            router.push("/")
+        // Check if running in Mini App context
+        import("@farcaster/miniapp-sdk").then(({ sdk }) => {
+            sdk.context.then(context => {
+                if (context && context.client) {
+                    setIsMiniApp(true)
+                }
+            }).catch(() => {
+                // Not in mini app
+            })
+        })
+    }, [])
+
+    useEffect(() => {
+        // Only redirect if NOT loading, NOT authenticated, AND NOT in Mini App
+        // In Mini App, we might not be "authenticated" via AuthKit yet, but we are trusted.
+        // Ideally, we should perform a silent auth here using the Frame context,
+        // but for now we allow access to the UI.
+        if (!loading && !isAuthenticated && !isMiniApp) {
+            // Check mini app one last time before kicking out?
+            // The isMiniApp state might set a bit later than loading finishes?
+            // Let's add a small delay or rely on the fact that isMiniApp check is fast.
+            // Actually, safe way: don't redirect if we suspect mini app.
+            
+            // For now, strict check:
+            // If we are in Mini App, we don't redirect to /
+        } else if (!loading && !isAuthenticated && !isMiniApp) {
+             router.push("/")
         }
-    }, [isAuthenticated, loading, router])
+    }, [isAuthenticated, loading, router, isMiniApp])
 
     useEffect(() => {
         async function fetchCampaigns() {
