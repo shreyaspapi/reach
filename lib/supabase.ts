@@ -113,6 +113,11 @@ export interface Campaign {
     reward_multiplier: number;
     created_at: string;
     updated_at: string;
+    pool_total?: string;
+    pool_address?: string;
+    x_handle?: string;
+    farcaster_handle?: string;
+    faq?: Array<{ question: string; answer: string }>;
 }
 
 export interface CampaignParticipant {

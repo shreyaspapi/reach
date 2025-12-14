@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectedUserFids } from '@/lib/backend';
 import { calculateEngagementScore, getUserHistory } from '@/lib/llm-scoring';
-import { getOrCreateUser, saveCast } from '@/lib/database';
+import { getOrCreateUser, saveCast, getActiveCampaigns, upsertCampaignParticipant, getUserStats } from '@/lib/database';
 import { updateMemberUnits } from '@/lib/gda-contract';
 import { isValidEthereumAddress } from '@/lib/utils';
 
@@ -45,19 +45,22 @@ async function processEvent(event: any) {
                 return;
             }
 
-            // Check if this is relevant to the campaign:
-            // 1. Cast BY @shreyaspapi (FID: 830020)
-            // 2. Cast that mentions @shreyaspapi
-            // 3. Cast that replies to @shreyaspapi
-            const SHREYAS_FID = 830020;
-            const isShreyasCast = authorFid === SHREYAS_FID;
-            const isMentionOrReply =
-                cast.text?.includes('@shreyaspapi') ||
-                cast.mentioned_profiles?.some((p: any) => p.username === 'shreyaspapi') ||
-                cast.parent_author?.fid === SHREYAS_FID;
+            // Find matching campaigns:
+            // A campaign is matched if:
+            //   - cast author fid == campaign.target_fid (creator self-cast)
+            //   - or cast mentions target_username
+            //   - or reply to target_fid
+            const activeCampaigns = await getActiveCampaigns();
+            const matchingCampaigns = activeCampaigns.filter((c) => {
+                const mentionsTarget = cast.text?.includes(`@${c.target_username}`) ||
+                    cast.mentioned_profiles?.some((p: any) => p.username?.toLowerCase() === c.target_username.toLowerCase());
+                const replyToTarget = cast.parent_author?.fid === c.target_fid;
+                const byTarget = authorFid === c.target_fid;
+                return mentionsTarget || replyToTarget || byTarget;
+            });
 
-            if (!isShreyasCast && !isMentionOrReply) {
-                console.log(`⏭️  Ignoring cast - not related to @shreyaspapi`);
+            if (matchingCampaigns.length === 0) {
+                console.log(`⏭️  Ignoring cast - no matching active campaigns`);
                 return;
             }
 
@@ -154,87 +157,47 @@ async function processEvent(event: any) {
                 if (savedCast) {
                     console.log(`✅ Cast saved to database (ID: ${savedCast.id})`);
 
-                    // TRIGGER ON-CHAIN UPDATE
                     const walletAddress = dbUser.wallet_address;
-                    
-                    // Validate that the wallet address is a valid Ethereum address
-                    // (not Solana or other chain addresses)
                     const isValidAddress = walletAddress && isValidEthereumAddress(walletAddress);
-                    
+
                     if (walletAddress && !isValidAddress) {
                         console.log(`⚠️ Wallet address in DB is not a valid Ethereum address: ${walletAddress}`);
-                        console.log('   (This might be a Solana or other chain address - skipping on-chain update)');
-                    } else if (walletAddress && isValidAddress) {
-                        console.log(`✅ Found valid Ethereum wallet address in DB: ${walletAddress}`);
-                    } else {
+                    } else if (!walletAddress) {
                         console.log('⚠️ User has no wallet address in DB - skipping on-chain update');
                     }
 
-                    if (walletAddress && isValidAddress) {
-                        console.log('⛓️ Triggering on-chain unit update...');
+                    // For each matching campaign, upsert participant and update on-chain units per pool
+                    for (const campaign of matchingCampaigns) {
+                        console.log(`📌 Processing campaign: ${campaign.name} (${campaign.id})`);
 
-                        // Fetch current GDA units from DB (or contract, but DB is faster cache)
-                        // For now, we'll just ADD the new score to the existing units
-                        // In a real app, you might want to fetch the *current* on-chain units first to be safe
+                        // Register participant
+                        await upsertCampaignParticipant(campaign.id, dbUser.id, authorFid);
 
-                        // Calculate new total units
-                        // dbUser.gda_units should have been updated by the trigger, but let's be safe and assume we add score
-                        // Note: The DB trigger `update_user_stats` runs AFTER insert.
-                        // We can query the updated stats or just pass score.
+                        // On-chain update only if wallet valid and pool configured
+                        if (walletAddress && isValidAddress && campaign.pool_address) {
+                            console.log(`✅ Wallet + pool found, updating on-chain units for pool ${campaign.pool_address}`);
 
-                        // Let's fetch the latest stats to get the ACCUMULATED score
-                        // (Since GDA units = total accumulated score)
-                        // Alternatively, we can just pass the *new total* if we had it.
+                            // Fetch latest stats (already updated by DB trigger)
+                            const stats = await getUserStats(authorFid);
+                            if (!stats || stats.gda_units === null || stats.gda_units === undefined) {
+                                console.error(`❌ Could not fetch user stats or gda_units is null for fid ${authorFid}`);
+                                continue;
+                            }
 
-                        // Simple approach: Get the user's total accumulated score from the DB
-                        // (which acts as the unit count)
-                        // We need to fetch the user_stats table.
-
-                        // For this MVP, let's assume we want to add the CURRENT CAST'S SCORE to their units.
-                        // But `updateMemberUnits` sets the *absolute* value, not relative.
-                        // So we need Total Score.
-
-                        // We can't easily get the fresh stats here without another DB call.
-                        // Let's rely on the return value of `saveCast`? No, that returns the cast.
-
-                        // Let's query user_stats for this user.
-                        // (Implementation detail: We need to import supabase client here or add a helper)
-                        // For now, let's do a "blind" add if we can't query, OR add a helper.
-
-                        // Better: Update `saveCast` or `getOrCreateUser` to return stats? 
-                        // Let's just import the supabase client here for a quick read.
-                        const { createClient } = require('@supabase/supabase-js');
-                        const supabase = createClient(
-                            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                            process.env.SUPABASE_SERVICE_ROLE_KEY!
-                        );
-
-                        const { data: stats, error: statsError } = await supabase
-                            .from('user_stats')
-                            .select('gda_units')
-                            .eq('user_id', dbUser.id)
-                            .single();
-
-                        console.log(`   Stats query result:`, { stats, statsError });
-
-                        if (stats && stats.gda_units !== null && stats.gda_units !== undefined) {
-                            const newTotalUnits = stats.gda_units; // This was updated by the trigger!
+                            const newTotalUnits = stats.gda_units;
                             console.log(`   Current GDA Units (from DB): ${newTotalUnits}`);
 
-                            // Call the contract
-                            console.log(`   Calling updateMemberUnits(${walletAddress}, ${newTotalUnits})...`);
-                            const txResult = await updateMemberUnits(walletAddress, newTotalUnits);
-
+                            const txResult = await updateMemberUnits(campaign.pool_address, walletAddress, newTotalUnits);
                             if (txResult.success) {
-                                console.log(`✅ On-chain units updated! Tx: ${txResult.txHash}`);
+                                console.log(`✅ On-chain units updated for pool ${campaign.pool_address}! Tx: ${txResult.txHash}`);
                             } else {
-                                console.error(`❌ Failed to update on-chain units: ${txResult.error}`);
+                                console.error(`❌ Failed to update on-chain units for pool ${campaign.pool_address}: ${txResult.error}`);
                             }
+                        } else if (walletAddress && isValidAddress && !campaign.pool_address) {
+                            console.log(`⚠️ Campaign ${campaign.name} has no pool_address configured - skipping on-chain update`);
                         } else {
-                            console.error(`❌ Could not fetch user stats or gda_units is null. Error:`, statsError);
+                            console.log('⚠️ User has no valid Ethereum wallet - skipping on-chain update');
                         }
-                    } else {
-                        console.log('⚠️ User has no embedded wallet - skipping on-chain update');
                     }
 
                 } else {

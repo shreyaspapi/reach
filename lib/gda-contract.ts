@@ -6,16 +6,16 @@ const GDA_FORWARDER_ABI = [{"inputs":[{"internalType":"contract ISuperfluid","na
 // Superfluid GDAv1 Forwarder Address (Sepolia)
 const GDA_FORWARDER_ADDRESS = "0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08";
 
-// REACH Pool Address (Sepolia)
-const REACH_POOL_ADDRESS = "0x2cc199976B4ACBe4211E943c1E7F070d76570D4e";
-
 // Wallet Private Key (from env)
 // CAUTION: In a production app, this should be a secure backend wallet
 const WALLET_PRIVATE_KEY = process.env.BACKEND_WALLET_PRIVATE_KEY;
 // const RPC_URL = process.env.RPC_URL || "https://rpc.sepolia.org";
 const RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/BkPg-jAIOhWPnn9X3VbhfA1fjquqGG36";
 
-export async function updateMemberUnits(memberAddress: string, newUnits: number) {
+/**
+ * Update member units for a specific pool
+ */
+export async function updateMemberUnits(poolAddress: string, memberAddress: string, newUnits: number | string | bigint) {
     if (!WALLET_PRIVATE_KEY) {
         console.error("Missing BACKEND_WALLET_PRIVATE_KEY");
         return { success: false, error: "Configuration error" };
@@ -32,7 +32,7 @@ export async function updateMemberUnits(memberAddress: string, newUnits: number)
         const wallet = new ethers.Wallet(WALLET_PRIVATE_KEY, provider);
         const gdaContract = new ethers.Contract(GDA_FORWARDER_ADDRESS, GDA_FORWARDER_ABI, wallet);
 
-        console.log(`   Updating units for ${memberAddress} to ${newUnits}...`);
+        console.log(`   Updating units for ${memberAddress} in pool ${poolAddress} to ${newUnits}...`);
 
         // Encode empty bytes for userData
         const userData = "0x";
@@ -50,9 +50,9 @@ export async function updateMemberUnits(memberAddress: string, newUnits: number)
         }
 
         const tx = await gdaContract.updateMemberUnits(
-            REACH_POOL_ADDRESS,
+            poolAddress,
             memberAddress,
-            BigInt(Math.round(newUnits)), // Ensure integer
+            BigInt(typeof newUnits === "bigint" ? newUnits : Math.round(Number(newUnits))), // Ensure integer
             userData
         );
 

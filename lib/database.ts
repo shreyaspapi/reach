@@ -330,6 +330,103 @@ export async function getLeaderboard(limit: number = 100, minCasts: number = 5):
 // ============================================================================
 
 /**
+ * Get campaign by ID
+ */
+export async function getCampaignById(id: string): Promise<Campaign | null> {
+    if (!supabaseAdmin) {
+        console.error('Supabase admin client not initialized');
+        return null;
+    }
+
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('campaigns')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            console.error('Error fetching campaign:', error);
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error in getCampaignById:', error);
+        return null;
+    }
+}
+
+/**
+ * Get campaign participants (leaderboard)
+ * Falls back to user_stats if no campaign participants exist
+ */
+export async function getCampaignParticipants(campaignId: string, limit: number = 50): Promise<any[]> {
+    if (!supabaseAdmin) {
+        console.error('Supabase admin client not initialized');
+        return [];
+    }
+
+    try {
+        // First try to get campaign-specific participants
+        const { data: participants, error: participantsError } = await supabaseAdmin
+            .from('campaign_participants')
+            .select(`
+                *,
+                users:user_id (
+                    username,
+                    display_name,
+                    pfp_url,
+                    wallet_address
+                )
+            `)
+            .eq('campaign_id', campaignId)
+            .order('total_score', { ascending: false })
+            .limit(limit);
+
+        if (participantsError) {
+            console.error('Error fetching campaign participants:', participantsError);
+        }
+
+        // If we have campaign participants, return them
+        if (participants && participants.length > 0) {
+            return participants;
+        }
+
+        // Fallback: Get top users from user_stats as general leaderboard
+        console.log('No campaign participants found, falling back to user_stats');
+        const { data: topUsers, error: statsError } = await supabaseAdmin
+            .from('user_stats')
+            .select(`
+                id,
+                total_score,
+                average_score,
+                total_casts as casts_count,
+                gda_units,
+                users:user_id (
+                    username,
+                    display_name,
+                    pfp_url,
+                    wallet_address
+                )
+            `)
+            .gte('total_casts', 1)
+            .order('total_score', { ascending: false })
+            .limit(limit);
+
+        if (statsError) {
+            console.error('Error fetching user stats:', statsError);
+            return [];
+        }
+
+        return topUsers || [];
+    } catch (error) {
+        console.error('Error in getCampaignParticipants:', error);
+        return [];
+    }
+}
+
+/**
  * Get active campaigns
  */
 export async function getActiveCampaigns(): Promise<Campaign[]> {

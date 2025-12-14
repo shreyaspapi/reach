@@ -10,18 +10,90 @@ import { EngagementHistory } from "@/components/engagement-history"
 import { useProfile, useSignIn } from "@farcaster/auth-kit"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { Campaign } from "@/lib/supabase"
+import { CAMPAIGNS } from "@/lib/campaigns"
 
 export default function DashboardPage() {
     const { isAuthenticated, profile } = useProfile()
     const { signOut } = useSignIn({})
     const router = useRouter()
     const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
+    const [activeCampaigns, setActiveCampaigns] = useState<Campaign[]>([])
+    const [loadingCampaigns, setLoadingCampaigns] = useState(true)
 
     useEffect(() => {
         if (!isAuthenticated) {
             router.push("/")
         }
     }, [isAuthenticated, router])
+
+    useEffect(() => {
+        async function fetchCampaigns() {
+            try {
+                const res = await fetch('/api/campaigns/active')
+                if (res.ok) {
+                    const data = await res.json()
+                    if (data && data.length > 0) {
+                        setActiveCampaigns(data)
+                    } else {
+                        // Fallback to mock campaigns if API returns empty (for dev/demo)
+                         // Map mock campaigns to Campaign interface
+                         const mockCampaigns = CAMPAIGNS.map(c => ({
+                             id: c.id.toString(),
+                             name: c.name,
+                             description: c.description || "",
+                             target_fid: 0,
+                             target_username: c.handles?.farcaster || "",
+                             is_active: true,
+                             start_date: new Date().toISOString(),
+                             communication_quality_weight: 0,
+                             community_impact_weight: 0,
+                             consistency_weight: 0,
+                             active_campaign_weight: 0,
+                             min_score_for_reward: 0,
+                             reward_multiplier: 1,
+                             created_at: new Date().toISOString(),
+                             updated_at: new Date().toISOString(),
+                             x_handle: c.handles?.x,
+                             farcaster_handle: c.handles?.farcaster,
+                             pool_total: "1M LUNO" // Default mock pool
+                         }))
+                         setActiveCampaigns(mockCampaigns as any)
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch campaigns", error)
+                 // Fallback to mock campaigns
+                 const mockCampaigns = CAMPAIGNS.map(c => ({
+                     id: c.id.toString(),
+                     name: c.name,
+                     description: c.description || "",
+                     target_fid: 0,
+                     target_username: c.handles?.farcaster || "",
+                     is_active: true,
+                     start_date: new Date().toISOString(),
+                     communication_quality_weight: 0,
+                     community_impact_weight: 0,
+                     consistency_weight: 0,
+                     active_campaign_weight: 0,
+                     min_score_for_reward: 0,
+                     reward_multiplier: 1,
+                     created_at: new Date().toISOString(),
+                     updated_at: new Date().toISOString(),
+                     x_handle: c.handles?.x,
+                     farcaster_handle: c.handles?.farcaster,
+                     pool_total: "1M LUNO"
+                 }))
+                 setActiveCampaigns(mockCampaigns as any)
+            } finally {
+                setLoadingCampaigns(false)
+            }
+        }
+
+        if (isAuthenticated) {
+            fetchCampaigns()
+        }
+    }, [isAuthenticated])
 
     const handleLogout = async () => {
         await signOut()
@@ -99,7 +171,7 @@ export default function DashboardPage() {
                     </div>
                 </section>
 
-                {/* Section 2: Allocations & Campaigns */}
+                {/* Section 2: Campaigns */}
                 <section className="min-h-screen bg-reach-blue/5 p-4 md:p-8 pt-24 space-y-8">
 
                     {/* Tab Navigation */}
@@ -140,25 +212,6 @@ export default function DashboardPage() {
                                 <ConnectedAccounts />
                             </div>
 
-                            {/* Allocations */}
-                            <div className="max-w-4xl mx-auto mt-16">
-                                <div className="flex items-center gap-4 mb-8 relative">
-                                    {/* Extended construction guide line */}
-                                    <div className="absolute left-0 right-0 h-px border-t border-dashed border-reach-blue/25 -mx-12"></div>
-                                    <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                    <h2 className="font-display text-3xl text-reach-blue font-extrabold relative z-10 bg-reach-paper px-4">Allocations</h2>
-                                    <div className="h-px bg-reach-blue flex-1 opacity-30 relative z-10"></div>
-                                </div>
-                                <div className="bg-white/50 backdrop-blur-sm p-6 border-sketchy relative guide-corners">
-                                    <PointsList />
-                                    <div className="mt-4 pt-4 border-t border-reach-blue/10 text-right">
-                                        <p className="font-mono text-[10px] uppercase tracking-widest opacity-50">Last Sync: Block 1829304</p>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
                             {/* Campaigns */}
                             <div className="max-w-4xl mx-auto pb-24 mt-16">
                                 <div className="flex items-center gap-4 mb-8 relative">
@@ -170,15 +223,21 @@ export default function DashboardPage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-6">
-                                    <CampaignCard
-                                        title="Talk to Shreyas"
-                                        creator="Shreyas Papinwar"
-                                        xHandle="@spapinwar"
-                                        farcasterHandle="@shreyaspapi"
-                                        description="Shreyas LOVES attention. Seriously. Tweet at him, cast at him, meme him, roast him—anything you do to @spapinwar on X or @shreyaspapi on Farcaster earns you $LUNO, streamed directly into your wallet via Superfluid. The more chaotic (yet relevant), the higher your score. Help Shreyas achieve his final form: a man drowning in notifications."
-                                        reward="Users earn $LUNO tokens in real‑time streams based on their AI‑evaluated engagement."
-                                        status="Active"
-                                    />
+                                    {loadingCampaigns ? (
+                                        <div className="text-center font-mono opacity-60">Loading campaigns...</div>
+                                    ) : activeCampaigns.map((campaign) => (
+                                        <CampaignCard
+                                            key={campaign.id}
+                                            id={campaign.id}
+                                            title={campaign.name}
+                                            creator={campaign.x_handle?.replace("@", "") || campaign.name}
+                                            xHandle={campaign.x_handle || "@unknown"}
+                                            farcasterHandle={campaign.farcaster_handle || campaign.target_username || "@unknown"}
+                                            description={campaign.description || "No description provided."}
+                                            reward={`Users earn tokens based on engagement in pool ${campaign.pool_total || "TBD"}`}
+                                            status={campaign.is_active ? "Active" : "Inactive"}
+                                        />
+                                    ))}
                                 </div>
                             </div>
 
