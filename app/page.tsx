@@ -18,21 +18,28 @@ export default function LoginPage() {
         const context = await sdk.context
         if (context && context.client) {
           setIsMiniApp(true)
-          // If we are in a Mini App, we can assume the user is "authenticated"
-          // in the sense that we have their context.
-          // However, for the app's internal logic (useProfile), we might need to bridge this.
-          // For now, let's just redirect to dashboard and let dashboard handle it.
-          // NOTE: Dashboard currently checks !isAuthenticated -> redirect to /
-          // We might need to update Dashboard to also check sdk.context
           
-          // Actually, let's try to let the user sign in via the button if auth-kit doesn't pick it up?
-          // No, the user wants auto-connect.
+          // Trigger the native "Confirm it's you" dialog
+          // We need a nonce for the sign-in request
+          const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
           
-          // In a real Mini App implementation using Auth Kit, 
-          // you often still need the user to "Sign In" to generate the SIWE signature 
-          // IF your backend requires it.
-          // But if we just want to show the UI:
-          router.push("/dashboard")
+          try {
+              // This triggers the native bottom sheet
+              const result = await sdk.actions.signIn({ 
+                  nonce,
+                  acceptAuthAddress: true 
+              });
+              
+              console.log("Mini App Sign In Result:", result);
+              
+              // Here you would typically send result.message and result.signature 
+              // to your backend to verify and create a session.
+              // For now, we'll just assume success and redirect.
+              router.push("/dashboard")
+          } catch (signInError) {
+              console.error("Sign in rejected or failed", signInError);
+              // If they reject, we stay on the login page
+          }
         }
       } catch (e) {
         console.error("Not in mini app", e)
