@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserByUsername, getUserDashboardData } from '@/lib/database';
+import { getUserByUsername, getUserDashboardData, getUserActiveCampaigns } from '@/lib/database';
 
 export async function GET(
     request: NextRequest,
@@ -20,6 +20,7 @@ export async function GET(
 
         // 2. Get their dashboard data (same structure as private dashboard)
         const dashboardData = await getUserDashboardData(user.fid);
+        const campaigns = await getUserActiveCampaigns(user.fid);
 
         if (!dashboardData) {
             return NextResponse.json({ 
@@ -30,7 +31,10 @@ export async function GET(
 
         return NextResponse.json({ 
             status: 'ok',
-            data: dashboardData 
+            data: {
+                ...dashboardData,
+                campaigns
+            }
         });
 
     } catch (error) {

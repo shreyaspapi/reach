@@ -388,9 +388,30 @@ export async function getCampaignParticipants(campaignId: string, limit: number 
             console.error('Error fetching campaign participants:', participantsError);
         }
 
-        // If we have campaign participants, return them
+        // If we have campaign participants, enrich with gda_units from user_stats
         if (participants && participants.length > 0) {
-            return participants;
+            const fids = participants.map((p: any) => p.fid).filter(Boolean);
+            let statsMap: Record<number, any> = {};
+            if (fids.length > 0) {
+                const { data: stats, error: statsError } = await supabaseAdmin
+                    .from('user_stats')
+                    .select('fid, gda_units, total_score')
+                    .in('fid', fids);
+
+                if (statsError) {
+                    console.error('Error fetching stats for participants:', statsError);
+                } else {
+                    statsMap = (stats || []).reduce((acc: any, row: any) => {
+                        acc[row.fid] = row;
+                        return acc;
+                    }, {});
+                }
+            }
+
+            return participants.map((p: any) => ({
+                ...p,
+                gda_units: statsMap[p.fid]?.gda_units ?? p.total_score ?? 0
+            }));
         }
 
         // Fallback: Get top users from user_stats as general leaderboard
@@ -399,6 +420,7 @@ export async function getCampaignParticipants(campaignId: string, limit: number 
             .from('user_stats')
             .select(`
                 id,
+                fid,
                 total_score,
                 average_score,
                 total_casts as casts_count,
@@ -449,6 +471,50 @@ export async function getActiveCampaigns(): Promise<Campaign[]> {
         return data || [];
     } catch (error) {
         console.error('Error in getActiveCampaigns:', error);
+        return [];
+    }
+}
+
+/**
+ * Get active campaigns for a specific user with their stats
+ */
+export async function getUserActiveCampaigns(fid: number): Promise<any[]> {
+    if (!supabaseAdmin) {
+        console.error('Supabase admin client not initialized');
+        return [];
+    }
+
+    try {
+        // Get campaigns where the user is a participant
+        const { data, error } = await supabaseAdmin
+            .from('campaign_participants')
+            .select(`
+                total_score,
+                average_score,
+                last_activity_at,
+                campaigns:campaign_id (*)
+            `)
+            .eq('fid', fid);
+
+        if (error) {
+            console.error('Error fetching user campaigns:', error);
+            return [];
+        }
+
+        // Filter for active campaigns and structure the return data
+        // We only want campaigns that exist and are active
+        return (data || [])
+            .filter((item: any) => item.campaigns && item.campaigns.is_active)
+            .map((item: any) => ({
+                ...item.campaigns,
+                user_stats: {
+                    total_score: item.total_score,
+                    average_score: item.average_score,
+                    last_activity_at: item.last_activity_at
+                }
+            }));
+    } catch (error) {
+        console.error('Error in getUserActiveCampaigns:', error);
         return [];
     }
 }
@@ -518,6 +584,88 @@ export async function upsertCampaignParticipant(
     } catch (error) {
         console.error('Error in upsertCampaignParticipant:', error);
         return false;
+    }
+}
+
+/**
+ * Get campaign allocations (units + percentages) from Supabase data
+ * - Prefers campaign_participants entries
+ * - Falls back to user_stats for gda_units when present
+ */
+export async function getCampaignAllocations(campaignId: string) {
+    if (!supabaseAdmin) {
+        console.error('Supabase admin client not initialized');
+        return null;
+    }
+
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('campaign_participants')
+            .select(`
+                id,
+                fid,
+                total_score,
+                average_score,
+                users:user_id (
+                    username,
+                    display_name,
+                    pfp_url,
+                    wallet_address
+                )
+            `)
+            .eq('campaign_id', campaignId);
+
+        if (error) {
+            console.error('Error fetching campaign allocations:', error);
+            return null;
+        }
+
+        // Fetch gda_units from user_stats for those fids
+        const fids = (data || []).map((p: any) => p.fid);
+        let gdaMap: Record<number, number> = {};
+        if (fids.length > 0) {
+            const { data: statsData, error: statsError } = await supabaseAdmin
+                .from('user_stats')
+                .select('fid, gda_units, total_score')
+                .in('fid', fids);
+
+            if (statsError) {
+                console.error('Error fetching user_stats for allocations:', statsError);
+            } else {
+                gdaMap = (statsData || []).reduce((acc: any, row: any) => {
+                    acc[row.fid] = Number(row.gda_units ?? row.total_score ?? 0);
+                    return acc;
+                }, {});
+            }
+        }
+
+        // Compute totals and percentages
+        const items = (data || []).map((p: any) => {
+            const units = Number(gdaMap[p.fid] ?? p.total_score ?? 0);
+            return {
+                fid: p.fid,
+                username: p.users?.username,
+                display_name: p.users?.display_name,
+                pfp_url: p.users?.pfp_url,
+                wallet_address: p.users?.wallet_address,
+                total_score: p.total_score,
+                units
+            };
+        });
+
+        const totalUnits = items.reduce((acc, i) => acc + i.units, 0);
+        const withPercent = items.map((i) => ({
+            ...i,
+            percent: totalUnits > 0 ? ((i.units / totalUnits) * 100).toFixed(2) : "0"
+        }));
+
+        return {
+            totalUnits,
+            items: withPercent
+        };
+    } catch (error) {
+        console.error('Error in getCampaignAllocations:', error);
+        return null;
     }
 }
 

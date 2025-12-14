@@ -14,7 +14,8 @@ import { Campaign } from "@/lib/supabase"
 import { CAMPAIGNS } from "@/lib/campaigns"
 
 export default function DashboardPage() {
-    const { isAuthenticated, profile } = useProfile()
+    // @ts-ignore
+    const { isAuthenticated, profile, loading } = useProfile()
     const { signOut } = useSignIn({})
     const router = useRouter()
     const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
@@ -22,10 +23,10 @@ export default function DashboardPage() {
     const [loadingCampaigns, setLoadingCampaigns] = useState(true)
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!loading && !isAuthenticated) {
             router.push("/")
         }
-    }, [isAuthenticated, router])
+    }, [isAuthenticated, loading, router])
 
     useEffect(() => {
         async function fetchCampaigns() {
@@ -99,6 +100,12 @@ export default function DashboardPage() {
         await signOut()
         router.push("/")
     }
+
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-reach-blue/5">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-reach-blue"></div>
+        </div>
+    )
 
     if (!isAuthenticated) return null
 

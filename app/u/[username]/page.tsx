@@ -14,6 +14,7 @@ interface DashboardData {
     user: User;
     stats: UserStats;
     recentCasts: Cast[];
+    campaigns?: any[];
 }
 
 export default function PublicProfilePage() {
@@ -188,6 +189,45 @@ export default function PublicProfilePage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Active Campaigns */}
+                {data.campaigns && data.campaigns.length > 0 && (
+                    <div className="mb-12">
+                         <div className="flex items-center gap-4 mb-6 relative">
+                            <h2 className="font-display text-2xl uppercase text-reach-blue font-extrabold bg-reach-paper pr-4 z-10 relative">Active Campaigns</h2>
+                            <div className="h-px bg-reach-blue flex-1 opacity-30"></div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {data.campaigns.map((campaign: any) => (
+                                <Link 
+                                    key={campaign.id} 
+                                    href={`/campaigns/${campaign.id}`}
+                                    className="block group relative bg-white/40 border-sketchy p-6 hover:bg-white/60 transition-all hover:-translate-y-1"
+                                >
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="font-display text-xl text-reach-blue font-bold group-hover:underline decoration-wavy">{campaign.name}</h3>
+                                        <ExternalLink className="w-4 h-4 text-reach-blue opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                    <p className="font-mono text-xs text-reach-blue/70 mb-4 line-clamp-2">{campaign.description}</p>
+                                    
+                                    <div className="flex items-center justify-between border-t border-reach-blue/10 pt-4">
+                                        <div className="flex flex-col">
+                                            <span className="font-mono text-[10px] uppercase tracking-widest opacity-60">Score</span>
+                                            <span className="font-bold text-lg">{Math.round(stats.gda_units || campaign.user_stats?.total_score || 0)}</span>
+                                        </div>
+                                         <div className="flex flex-col items-end">
+                                            <span className="font-mono text-[10px] uppercase tracking-widest opacity-60">Status</span>
+                                            <span className="font-bold text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full flex items-center gap-1">
+                                                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                                                Active
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Recent Activity */}
                 <div className="max-w-3xl">

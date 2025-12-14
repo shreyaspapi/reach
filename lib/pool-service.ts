@@ -17,6 +17,7 @@ const GDA_FORWARDER_ABI = [
 
 const GDA_FORWARDER_ADDRESS = "0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08";
 const RPC_URL = process.env.RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/BkPg-jAIOhWPnn9X3VbhfA1fjquqGG36";
+const SUPERFLUID_SUBGRAPH_URL = process.env.SUPERFLUID_SUBGRAPH_URL || "https://subgraph-endpoints.superfluid.dev/eth-sepolia/protocol-v1";
 
 export interface PoolData {
     poolAddress: string;
@@ -28,39 +29,76 @@ export interface PoolData {
 }
 
 /**
- * Fetch pool data from Superfluid contract
+ * Fetch pool data from The Graph (Superfluid subgraph)
+ * Replaces RPC call for better reliability
  */
-export async function getPoolData(poolAddress: string): Promise<PoolData | null> {
+export async function getPoolDataFromGraph(poolAddress: string): Promise<PoolData | null> {
     try {
-        const provider = new ethers.JsonRpcProvider(RPC_URL);
-        const poolContract = new ethers.Contract(poolAddress, POOL_ABI, provider);
-        const gdaContract = new ethers.Contract(GDA_FORWARDER_ADDRESS, GDA_FORWARDER_ABI, provider);
+        const query = `
+        {
+          pool(id: "${poolAddress.toLowerCase()}") {
+            id
+            totalUnits
+            token {
+              id
+            }
+            poolMembers {
+              id
+            }
+            flowRate
+          }
+        }`;
 
-        // Fetch data in parallel
-        const [totalUnits, totalMembers, tokenAddress, adjustmentFlowRate] = await Promise.all([
-            poolContract.getTotalUnits(),
-            poolContract.getTotalMembers(),
-            poolContract.token(),
-            gdaContract.getPoolAdjustmentFlowRate(poolAddress)
-        ]);
+        const res = await fetch(SUPERFLUID_SUBGRAPH_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query })
+        });
 
-        // Convert flow rate from wei/second to tokens/second
-        // Flow rate is int96, convert to human readable
-        const flowRatePerSecond = Number(adjustmentFlowRate) / 1e18;
+        if (!res.ok) {
+            console.error("Graph query failed", await res.text());
+            return null;
+        }
+
+        const json = await res.json();
+        const pool = json?.data?.pool;
+        
+        if (!pool) {
+            console.warn(`Pool ${poolAddress} not found in subgraph`);
+            return null;
+        }
+
+        // Calculate member count
+        const totalMembers = pool.poolMembers ? pool.poolMembers.length.toString() : "0";
+        
+        // Get flow rate (default to 0 if not indexed on pool directly)
+        // Note: 'flowRate' might not be standard on Pool entity in all subgraph versions
+        // If it fails, we fall back to 0
+        const flowRate = pool.flowRate || "0";
+        
+        // Convert flow rate from wei/second to human readable per month
+        const flowRatePerSecond = Number(flowRate) / 1e18;
         const flowRatePerMonth = flowRatePerSecond * 60 * 60 * 24 * 30;
 
         return {
-            poolAddress,
-            totalUnits: totalUnits.toString(),
-            totalMembers: totalMembers.toString(),
-            adjustmentFlowRate: adjustmentFlowRate.toString(),
+            poolAddress: pool.id,
+            totalUnits: pool.totalUnits || "0",
+            totalMembers: totalMembers,
+            adjustmentFlowRate: flowRate,
             adjustmentFlowRateFormatted: `${flowRatePerMonth.toFixed(2)} tokens/month`,
-            tokenAddress
+            tokenAddress: pool.token?.id || ""
         };
-    } catch (error) {
-        console.error('Error fetching pool data:', error);
+    } catch (err) {
+        console.error("Error fetching graph pool data:", err);
         return null;
     }
+}
+
+/**
+ * Fetch pool data (Proxy to Graph implementation)
+ */
+export async function getPoolData(poolAddress: string): Promise<PoolData | null> {
+    return getPoolDataFromGraph(poolAddress);
 }
 
 /**
@@ -92,4 +130,55 @@ export function calculateMemberShare(memberUnits: string, totalUnits: string, po
     const sharePercent = (Number(unitsNum) / Number(totalUnitsNum)) * 100;
     
     return `${sharePercent.toFixed(2)}%`;
+}
+
+/**
+ * Fetch pool members and units from The Graph (Superfluid subgraph)
+ * Note: depends on the pool being indexed; uses sepolia by default
+ */
+export async function getPoolMembersFromGraph(poolAddress: string): Promise<{
+    totalUnits: string;
+    members: Array<{ address: string; units: string }>;
+} | null> {
+    try {
+        const query = `
+        {
+          pool(id: "${poolAddress.toLowerCase()}") {
+            id
+            totalUnits
+            members {
+              account {
+                id
+              }
+              units
+            }
+          }
+        }`;
+
+        const res = await fetch(SUPERFLUID_SUBGRAPH_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query })
+        });
+
+        if (!res.ok) {
+            console.error("Graph query failed", await res.text());
+            return null;
+        }
+
+        const json = await res.json();
+        const pool = json?.data?.pool;
+        if (!pool) return null;
+
+        return {
+            totalUnits: pool.totalUnits || "0",
+            members: (pool.members || []).map((m: any) => ({
+                address: m.account?.id,
+                units: m.units
+            }))
+        };
+    } catch (err) {
+        console.error("Error fetching graph pool members:", err);
+        return null;
+    }
 }

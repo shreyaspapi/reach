@@ -6,8 +6,10 @@ import { Loader2 } from "lucide-react"
 export function StreamCounter() {
     const { balance, hasStream, loading } = useLunoStream()
 
-    // Fallback to 0.00 if no stream found yet (or loading)
-    const displayBalance = hasStream ? balance : "0.000000"
+    // Fallback to 0 if no stream found yet (or loading)
+    // Convert to whole number without decimals
+    const numericBalance = hasStream ? parseFloat(balance) : 0
+    const displayBalance = Math.floor(numericBalance).toString()
 
     if (loading && !hasStream) {
         return (

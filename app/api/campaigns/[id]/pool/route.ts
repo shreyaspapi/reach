@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getCampaignById } from '@/lib/database';
-import { getPoolData } from '@/lib/pool-service';
+import { getCampaignById, getCampaignAllocations } from '@/lib/database';
+import { getPoolData, getPoolMembersFromGraph } from '@/lib/pool-service';
 
 export async function GET(
     request: Request,
@@ -21,13 +21,23 @@ export async function GET(
         }
 
         // Fetch pool data from blockchain
-        const poolData = await getPoolData(campaign.pool_address);
+        const poolData = campaign.pool_address ? await getPoolData(campaign.pool_address) : null;
+        const allocations = await getCampaignAllocations(id);
 
-        if (!poolData) {
-            return NextResponse.json({ error: 'Failed to fetch pool data' }, { status: 500 });
+        // If on-chain pool fetch failed, try The Graph as a secondary source
+        let graphData = null;
+        if (!poolData && campaign.pool_address) {
+            graphData = await getPoolMembersFromGraph(campaign.pool_address);
         }
 
-        return NextResponse.json(poolData);
+        return NextResponse.json({
+            poolAddress: campaign.pool_address,
+            poolData,
+            allocations,
+            graphData,
+            error: !poolData && !graphData ? 'chain_call_failed' : undefined,
+            message: !poolData && !graphData ? 'Unable to fetch on-chain pool data right now' : undefined
+        });
     } catch (error) {
         console.error('Error fetching pool data:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
