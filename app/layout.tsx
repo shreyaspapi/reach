@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "@/components/providers";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://luno.social"),
   title: "Luno - The Social Economy",
   description: "Get rewarded for your social engagement. Real-time token streams for every meaningful interaction.",
   manifest: "/manifest.json",
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   other: {
     // Farcaster Frame metadata
     "fc:frame": "vNext",
-    "fc:frame:image": "/reach-logo.png",
+    "fc:frame:image": new URL("/reach-logo.png", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
     "fc:frame:button:1": "Launch Luno",
     "fc:frame:button:1:action": "link",
     "fc:frame:button:1:target": process.env.NEXT_PUBLIC_APP_URL || "https://luno.social",
