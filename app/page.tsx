@@ -60,16 +60,36 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Sign in button */}
-        <div className="flex flex-col items-center gap-6">
-          <NeynarAuth />
+        {/* Action buttons */}
+        <div className="flex flex-col items-center gap-8 w-full max-w-xs">
+          {/* Primary action - Farcaster Sign In */}
+          <div className="w-full">
+            <NeynarAuth />
+          </div>
 
-          <Link
-            href="/explore"
-            className="font-mono text-xs text-reach-blue/70 hover:text-reach-blue hover:underline decoration-wavy underline-offset-4 uppercase tracking-widest transition-colors"
-          >
-            View Leaderboard
-          </Link>
+          {/* Divider */}
+          <div className="flex items-center gap-4 w-full">
+            <span className="flex-1 h-px bg-reach-blue/20"></span>
+            <span className="font-mono text-[10px] text-reach-blue/50 uppercase tracking-widest">or explore</span>
+            <span className="flex-1 h-px bg-reach-blue/20"></span>
+          </div>
+
+          {/* Secondary actions */}
+          <div className="flex flex-col items-center gap-4 w-full">
+            <Link
+              href="/wrapped"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-lg border-2 border-reach-blue/30 bg-reach-paper px-6 py-3 font-mono text-sm font-bold uppercase tracking-widest text-reach-blue shadow-sm transition-all hover:border-reach-blue hover:bg-reach-blue/5 hover:shadow-md"
+            >
+              🎁 2025 Wrapped
+            </Link>
+
+            <Link
+              href="/explore"
+              className="font-mono text-xs text-reach-blue/60 hover:text-reach-blue hover:underline decoration-wavy underline-offset-4 uppercase tracking-widest transition-colors"
+            >
+              View Leaderboard →
+            </Link>
+          </div>
         </div>
       </div>
 
