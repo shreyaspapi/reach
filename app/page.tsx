@@ -1,77 +1,12 @@
 "use client"
 
-import { SignInButton, useProfile } from "@farcaster/auth-kit"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
 import Link from "next/link"
-import { sdk } from "@farcaster/miniapp-sdk"
+import { NeynarAuth } from "@/components/neynar-auth"
 
 export default function LoginPage() {
-  const { isAuthenticated } = useProfile()
-  const router = useRouter()
-  const [isMiniApp, setIsMiniApp] = useState(false)
 
-  // Check for Mini App context and handle auto-redirect
-  useEffect(() => {
-    const checkMiniApp = async () => {
-      try {
-        const context = await sdk.context
-        if (context && context.client) {
-          setIsMiniApp(true)
-          
-          // Trigger the native "Confirm it's you" dialog
-          // We need a nonce for the sign-in request
-          const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-          
-          try {
-              // This triggers the native bottom sheet
-              const result = await sdk.actions.signIn({ 
-                  nonce,
-                  acceptAuthAddress: true 
-              });
-              
-              console.log("Mini App Sign In Result:", result);
-              
-              // Verify the signature with our backend
-              const verifyRes = await fetch("/api/auth/verify", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  message: result.message,
-                  signature: result.signature,
-                  nonce,
-                  domain: "farcaster.luno.social",
-                }),
-              });
-
-              if (!verifyRes.ok) {
-                throw new Error("Verification failed");
-              }
-
-              const verifyData = await verifyRes.json();
-              console.log("Verified User:", verifyData);
-
-              // Redirect to dashboard upon success
-              router.push("/dashboard")
-          } catch (signInError) {
-              console.error("Sign in rejected or failed", signInError);
-              // If they reject, we stay on the login page
-          }
-        }
-      } catch (e) {
-        console.error("Not in mini app", e)
-      }
-    }
-    checkMiniApp()
-  }, [router])
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/dashboard")
-    }
-  }, [isAuthenticated, router])
+  // Neynar handles authentication state internally
+  // The NeynarAuth component will handle redirects after successful authentication
 
   return (
     <main className="flex flex-col items-center justify-between min-h-screen px-6 py-8 safe-area-inset">
@@ -127,8 +62,8 @@ export default function LoginPage() {
 
         {/* Sign in button */}
         <div className="flex flex-col items-center gap-6">
-          <SignInButton />
-          
+          <NeynarAuth />
+
           <Link
             href="/explore"
             className="font-mono text-xs text-reach-blue/70 hover:text-reach-blue hover:underline decoration-wavy underline-offset-4 uppercase tracking-widest transition-colors"

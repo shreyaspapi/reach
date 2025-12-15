@@ -2,10 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: [
-    '@farcaster/auth-kit',
-    '@farcaster/auth-client', 
     '@farcaster/miniapp-sdk',
-    '@farcaster/quick-auth',
+    '@neynar/nodejs-sdk',
+    '@neynar/react',
     'viem',
   ],
   serverExternalPackages: [

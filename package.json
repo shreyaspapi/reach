@@ -10,9 +10,9 @@
     "seed:campaigns": "tsx scripts/seed-campaigns.ts"
   },
   "dependencies": {
-    "@farcaster/auth-client": "^0.7.0",
-    "@farcaster/auth-kit": "^0.6.0",
     "@farcaster/miniapp-sdk": "^0.2.1",
+    "@neynar/nodejs-sdk": "^3.110.0",
+    "@neynar/react": "^1.2.22",
     "@supabase/supabase-js": "^2.84.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

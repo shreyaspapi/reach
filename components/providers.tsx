@@ -1,14 +1,7 @@
 "use client"
-import { AuthKitProvider } from "@farcaster/auth-kit";
 import { sdk } from "@farcaster/miniapp-sdk";
-import "@farcaster/auth-kit/styles.css";
 import React, { useEffect } from "react";
-
-const config = {
-    rpcUrl: "https://mainnet.optimism.io",
-    domain: "farcaster.luno.social",
-    siweUri: "https://farcaster.luno.social/login",
-};
+import { NeynarProvider } from "@/contexts/neynar-context";
 
 // Component to handle Mini App SDK ready signal
 function MiniAppReady({ children }: { children: React.ReactNode }) {
@@ -38,10 +31,10 @@ function MiniAppReady({ children }: { children: React.ReactNode }) {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <AuthKitProvider config={config}>
+        <NeynarProvider>
             <MiniAppReady>
                 {children}
             </MiniAppReady>
-        </AuthKitProvider>
+        </NeynarProvider>
     );
 }

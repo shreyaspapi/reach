@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useProfile } from '@farcaster/auth-kit'
+import { useNeynar } from '@/contexts/neynar-context'
 import { normalizeAddress } from '@/lib/utils'
 
 const SUPERFLUID_SUBGRAPH_URL = 'https://subgraph-endpoints.superfluid.dev/eth-sepolia/protocol-v1'
@@ -17,7 +17,7 @@ interface PoolMemberData {
 }
 
 export function useLunoStream() {
-    const { profile } = useProfile()
+    const { user } = useNeynar()
     const [data, setData] = useState<PoolMemberData | null>(null)
     const [flowRate, setFlowRate] = useState<bigint>(BigInt(0))
     const [balance, setBalance] = useState<string>("0")
@@ -28,8 +28,8 @@ export function useLunoStream() {
         // Filter out Solana addresses and other non-Ethereum addresses
         const findEthereumAddress = () => {
             // Check verifications array first (these are usually Ethereum addresses)
-            if (profile?.verifications && Array.isArray(profile.verifications)) {
-                for (const addr of profile.verifications) {
+            if (user?.verifications && Array.isArray(user.verifications)) {
+                for (const addr of user.verifications) {
                     const normalized = normalizeAddress(addr)
                     if (normalized) {
                         return normalized
@@ -37,8 +37,8 @@ export function useLunoStream() {
                 }
             }
             // Fallback to custody address if it's a valid Ethereum address
-            if (profile?.custody) {
-                const normalized = normalizeAddress(profile.custody)
+            if (user?.custody_address) {
+                const normalized = normalizeAddress(user.custody_address)
                 if (normalized) {
                     return normalized
                 }
@@ -102,7 +102,7 @@ export function useLunoStream() {
         } finally {
             setLoading(false)
         }
-    }, [profile])
+    }, [user])
 
     useEffect(() => {
         fetchStreamData()

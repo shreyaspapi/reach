@@ -1,21 +1,21 @@
 "use client"
 
-import { useProfile } from "@farcaster/auth-kit"
 import { Wallet, Copy, Check } from "lucide-react"
 import { useState, useEffect } from "react"
 import { normalizeAddress } from "@/lib/utils"
+import { useNeynar } from "@/contexts/neynar-context"
 
 export function ConnectedAccounts() {
-    const { profile, isAuthenticated } = useProfile()
+    const { user, isAuthenticated } = useNeynar()
     const [copied, setCopied] = useState(false)
     const [isSynced, setIsSynced] = useState(false)
 
-    // Find the first Ethereum address from verifications or custody
-    // Filter out Solana addresses and other non-Ethereum addresses
+    // Find the first Ethereum address from verifications
+    // Neynar provides verified addresses in user.verifications
     const findEthereumAddress = () => {
       // Check verifications array first (these are usually Ethereum addresses)
-      if (profile?.verifications && Array.isArray(profile.verifications)) {
-        for (const addr of profile.verifications) {
+      if (user?.verifications && Array.isArray(user.verifications)) {
+        for (const addr of user.verifications) {
           const normalized = normalizeAddress(addr)
           if (normalized) {
             return normalized
@@ -23,20 +23,20 @@ export function ConnectedAccounts() {
         }
       }
       // Fallback to custody address if it's a valid Ethereum address
-      if (profile?.custody) {
-        const normalized = normalizeAddress(profile.custody)
+      if (user?.custody_address) {
+        const normalized = normalizeAddress(user.custody_address)
         if (normalized) {
           return normalized
         }
       }
       return undefined
     }
-    
+
     const walletAddress = findEthereumAddress()
 
     useEffect(() => {
         const syncUser = async () => {
-            if (isAuthenticated && profile && !isSynced) {
+            if (isAuthenticated && user && !isSynced) {
                 try {
                     await fetch('/api/user/sync', {
                         method: 'POST',
@@ -44,12 +44,12 @@ export function ConnectedAccounts() {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            fid: profile.fid,
-                            username: profile.username,
-                            display_name: profile.displayName,
-                            pfp_url: profile.pfpUrl,
-                            follower_count: (profile as any).followerCount,
-                            following_count: (profile as any).followingCount,
+                            fid: user.fid,
+                            username: user.username,
+                            display_name: user.display_name,
+                            pfp_url: user.pfp_url,
+                            follower_count: user.follower_count,
+                            following_count: user.following_count,
                             wallet_address: walletAddress
                         }),
                     });
@@ -61,7 +61,7 @@ export function ConnectedAccounts() {
         };
 
         syncUser();
-    }, [isAuthenticated, profile, walletAddress, isSynced]);
+    }, [isAuthenticated, user, walletAddress, isSynced]);
 
     const copyAddress = () => {
         if (walletAddress) {
@@ -71,7 +71,7 @@ export function ConnectedAccounts() {
         }
     }
 
-    if (!isAuthenticated || !profile) return null
+    if (!isAuthenticated || !user) return null
 
     return (
         <div className="grid gap-4">
@@ -119,13 +119,13 @@ export function ConnectedAccounts() {
 
                     <div className="mt-2 flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                            {profile.pfpUrl && (
+                            {user.pfp_url && (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src={profile.pfpUrl} alt={profile.username || "User"} className="w-8 h-8 rounded-full border border-reach-blue/20" />
+                                <img src={user.pfp_url} alt={user.username || "User"} className="w-8 h-8 rounded-full border border-reach-blue/20" />
                             )}
                             <div className="flex flex-col overflow-hidden">
-                                <span className="font-mono text-xs font-bold truncate">{profile.displayName}</span>
-                                <span className="font-mono text-xs text-reach-blue/80 truncate">@{profile.username}</span>
+                                <span className="font-mono text-xs font-bold truncate">{user.display_name}</span>
+                                <span className="font-mono text-xs text-reach-blue/80 truncate">@{user.username}</span>
                             </div>
                         </div>
                     </div>

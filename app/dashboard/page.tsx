@@ -7,50 +7,23 @@ import { PointsList } from "@/components/points-list"
 import { CampaignCard } from "@/components/campaign-card"
 import { ConnectedAccounts } from "@/components/connected-accounts"
 import { EngagementHistory } from "@/components/engagement-history"
-import { useProfile, useSignIn } from "@farcaster/auth-kit"
+import { useNeynar } from "@/contexts/neynar-context"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Campaign } from "@/lib/supabase"
 import { CAMPAIGNS } from "@/lib/campaigns"
 
 export default function DashboardPage() {
-    // @ts-ignore
-    const { isAuthenticated, profile, loading } = useProfile()
-    const { signOut } = useSignIn({})
+    const { isAuthenticated, user, loading, isMiniApp, signOut } = useNeynar()
     const router = useRouter()
     const [activeTab, setActiveTab] = useState < "overview" | "history" > ("overview")
     const [activeCampaigns, setActiveCampaigns] = useState<Campaign[]>([])
     const [loadingCampaigns, setLoadingCampaigns] = useState(true)
-    const [isMiniApp, setIsMiniApp] = useState(false)
-
-    useEffect(() => {
-        // Check if running in Mini App context
-        import("@farcaster/miniapp-sdk").then(({ sdk }) => {
-            sdk.context.then(context => {
-                if (context && context.client) {
-                    setIsMiniApp(true)
-                }
-            }).catch(() => {
-                // Not in mini app
-            })
-        })
-    }, [])
 
     useEffect(() => {
         // Only redirect if NOT loading, NOT authenticated, AND NOT in Mini App
-        // In Mini App, we might not be "authenticated" via AuthKit yet, but we are trusted.
-        // Ideally, we should perform a silent auth here using the Frame context,
-        // but for now we allow access to the UI.
         if (!loading && !isAuthenticated && !isMiniApp) {
-            // Check mini app one last time before kicking out?
-            // The isMiniApp state might set a bit later than loading finishes?
-            // Let's add a small delay or rely on the fact that isMiniApp check is fast.
-            // Actually, safe way: don't redirect if we suspect mini app.
-            
-            // For now, strict check:
-            // If we are in Mini App, we don't redirect to /
-        } else if (!loading && !isAuthenticated && !isMiniApp) {
-             router.push("/")
+            router.push("/")
         }
     }, [isAuthenticated, loading, router, isMiniApp])
 
@@ -117,13 +90,13 @@ export default function DashboardPage() {
             }
         }
 
-        if (isAuthenticated) {
+        if (isAuthenticated || isMiniApp) {
             fetchCampaigns()
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, isMiniApp])
 
     const handleLogout = async () => {
-        await signOut()
+        signOut()
         router.push("/")
     }
 

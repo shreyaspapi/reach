@@ -2,7 +2,7 @@
 
 import { Twitter as TwitterIcon, Star, MessageSquare, Heart, Repeat, ExternalLink, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useProfile } from "@farcaster/auth-kit"
+import { useNeynar } from "@/contexts/neynar-context"
 import { useEffect, useState } from "react"
 
 const XIcon = ({ className }: { className?: string }) => (
@@ -45,13 +45,13 @@ export interface Interaction {
 }
 
 export function EngagementHistory() {
-    const { profile } = useProfile()
+    const { user } = useNeynar()
     const [interactions, setInteractions] = useState < Interaction[] > ([])
     const [userStats, setUserStats] = useState < any > (null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState < string | null > (null)
 
-    const userFid = profile?.fid
+    const userFid = user?.fid
 
     useEffect(() => {
         async function fetchData() {
