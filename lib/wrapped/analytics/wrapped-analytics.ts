@@ -346,7 +346,7 @@ export class WrappedAnalytics {
           const known = this.getKnownToken(key)
           if (known.symbol) {
             symbol = known.symbol
-            name = known.name
+            name = known.name || "Token"
           } else {
             // Mark for onchain lookup if not known
             unknownTokens.add(key)
