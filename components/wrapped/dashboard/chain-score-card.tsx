@@ -212,7 +212,7 @@ export function ChainScoreCard({ data, address, isLoading }: ChainScoreCardProps
   return (
     <div
       data-wrapped-card
-      className="blueprint-card rounded-lg p-10 animate-blueprint-fade relative overflow-hidden"
+      className="blueprint-card rounded-lg p-4 sm:p-6 lg:p-10 animate-blueprint-fade relative overflow-hidden"
       style={{ animationDelay: "50ms" }}
     >
       {/* Subtle radial gradient from top-left */}
@@ -256,9 +256,9 @@ export function ChainScoreCard({ data, address, isLoading }: ChainScoreCardProps
           <div className="space-y-4">
             <div>
               {/* Base logo + "base 2025" */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4">
                 {/* Base logo */}
-                <div className="h-14 w-auto">
+                <div className="h-10 sm:h-14 w-auto">
                   <svg
                     viewBox="0 0 1280 323.84"
                     className="h-full w-auto fill-foreground"
@@ -270,11 +270,11 @@ export function ChainScoreCard({ data, address, isLoading }: ChainScoreCardProps
                 </div>
 
                 {/* "2025" text - matched to logo height */}
-                <span className="font-black uppercase tracking-wider leading-none text-7xl">2025</span>
+                <span className="font-black uppercase tracking-wider leading-none text-5xl sm:text-7xl">2025</span>
               </div>
 
               {/* Second line: "Wrapped" - sized to match combined width above */}
-              <h1 className="text-8xl font-black uppercase tracking-wider text-outlined-hatched leading-none mt-2">
+              <h1 className="text-6xl sm:text-8xl font-black uppercase tracking-wider text-outlined-hatched leading-none mt-2">
                 Wrapped
               </h1>
             </div>
@@ -354,11 +354,11 @@ export function ChainScoreCard({ data, address, isLoading }: ChainScoreCardProps
           </p>
         </div>
 
-        <div className="col-span-1 lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="col-span-1 lg:col-span-7 grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
           {quickStats.map((stat, index) => (
             <div
               key={stat.label}
-              className="border-2 border-foreground rounded-lg p-4 bg-background hover:bg-hatch transition-all relative group"
+              className="border-2 border-foreground rounded-lg p-2 sm:p-4 bg-background hover:bg-hatch transition-all relative group"
               style={{ animationDelay: `${(index + 1) * 50}ms` }}
             >
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-foreground/20 group-hover:bg-foreground/40 transition-colors" />

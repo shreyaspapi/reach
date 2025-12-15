@@ -9,83 +9,82 @@ export default function LoginPage() {
   // The NeynarAuth component will handle redirects after successful authentication
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen px-6 py-8 safe-area-inset">
-      {/* Top section with badge and docs link */}
-      <div className="relative w-full flex items-center justify-center pt-4 px-4">
-        <div className="absolute right-4 top-4">
-          <Link
-            href="/docs"
-            className="inline-flex items-center gap-2 rounded-full border border-reach-blue/30 bg-reach-paper/80 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-reach-blue/80 shadow-sm backdrop-blur hover:border-reach-blue hover:text-reach-blue"
-          >
-            Docs
-          </Link>
-        </div>
+    <main className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+      {/* Docs button - fixed position */}
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6 lg:right-8 lg:top-8">
+        <Link
+          href="/docs"
+          className="inline-flex items-center gap-2 rounded-lg border-2 border-reach-blue/30 bg-reach-paper px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-reach-blue shadow-sm transition-all hover:border-reach-blue hover:bg-reach-blue/5 hover:shadow-md sm:px-4 sm:py-2"
+        >
+          📖 Docs
+        </Link>
       </div>
-      {/* Center section with logo and branding */}
-      <div className="flex flex-1 flex-col items-center justify-center w-full max-w-sm mx-auto gap-12">
+
+      {/* Main content container */}
+      <div className="w-full max-w-md space-y-8 sm:space-y-10">
         {/* Logo with minimal frame */}
-        <div className="relative w-full max-w-xs">
+        <div className="relative mx-auto w-full max-w-sm">
           {/* Simple corner brackets */}
-          <div className="absolute -top-3 -left-3 w-6 h-6 border-l-2 border-t-2 border-reach-blue" />
-          <div className="absolute -top-3 -right-3 w-6 h-6 border-r-2 border-t-2 border-reach-blue" />
-          <div className="absolute -bottom-3 -left-3 w-6 h-6 border-l-2 border-b-2 border-reach-blue" />
-          <div className="absolute -bottom-3 -right-3 w-6 h-6 border-r-2 border-b-2 border-reach-blue" />
+          <div className="absolute -left-3 -top-3 h-6 w-6 border-l-2 border-t-2 border-reach-blue" />
+          <div className="absolute -right-3 -top-3 h-6 w-6 border-r-2 border-t-2 border-reach-blue" />
+          <div className="absolute -bottom-3 -left-3 h-6 w-6 border-b-2 border-l-2 border-reach-blue" />
+          <div className="absolute -bottom-3 -right-3 h-6 w-6 border-b-2 border-r-2 border-reach-blue" />
 
           {/* Brand name */}
-          <div className="text-center py-12">
-            <h1 className="font-display text-8xl md:text-9xl text-reach-blue font-extrabold tracking-tight">
+          <div className="py-10 text-center sm:py-12">
+            <h1 className="font-display text-7xl font-extrabold tracking-tight text-reach-blue sm:text-8xl lg:text-9xl">
               Luno
             </h1>
-            <p className="font-mono text-base md:text-lg text-reach-blue/70 mt-3 tracking-[0.3em] uppercase">
+            <p className="mt-3 font-mono text-sm uppercase tracking-[0.3em] text-reach-blue/70 sm:text-base lg:text-lg">
               The Social Economy
             </p>
           </div>
         </div>
 
         {/* Value proposition */}
-        <div className="text-center space-y-4 max-w-xs">
+        <div className="space-y-4 text-center">
           <div className="flex justify-center">
-            <div className="inline-block border-2 border-reach-blue px-4 py-1.5 bg-reach-blue text-reach-paper transform -rotate-1">
-              <span className="font-mono text-xs font-bold tracking-widest uppercase">Social Rewards</span>
+            <div className="inline-block -rotate-1 transform border-2 border-reach-blue bg-reach-blue px-4 py-1.5 text-reach-paper">
+              <span className="font-mono text-xs font-bold uppercase tracking-widest">Social Rewards</span>
             </div>
           </div>
-          <p className="font-mono text-sm text-reach-blue/90 leading-relaxed">
+          <p className="mx-auto max-w-sm font-mono text-sm leading-relaxed text-reach-blue/90">
             Your engagement has value.<br />
             Get paid for every meaningful interaction.
           </p>
           <div className="flex items-center justify-center gap-4 text-reach-blue/50">
-            <span className="w-8 h-px bg-reach-blue/30"></span>
+            <span className="h-px w-8 bg-reach-blue/30"></span>
             <span className="font-mono text-[10px] uppercase tracking-widest">Real-time Streams</span>
-            <span className="w-8 h-px bg-reach-blue/30"></span>
+            <span className="h-px w-8 bg-reach-blue/30"></span>
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-col items-center gap-8 w-full max-w-xs">
+        <div className="space-y-6">
           {/* Primary action - Farcaster Sign In */}
           <div className="w-full">
             <NeynarAuth />
           </div>
 
           {/* Divider */}
-          <div className="flex items-center gap-4 w-full">
-            <span className="flex-1 h-px bg-reach-blue/20"></span>
-            <span className="font-mono text-[10px] text-reach-blue/50 uppercase tracking-widest">or explore</span>
-            <span className="flex-1 h-px bg-reach-blue/20"></span>
+          <div className="flex items-center gap-4">
+            <span className="h-px flex-1 bg-reach-blue/20"></span>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-reach-blue/50">or explore</span>
+            <span className="h-px flex-1 bg-reach-blue/20"></span>
           </div>
 
           {/* Secondary actions */}
-          <div className="flex flex-col items-center gap-4 w-full">
+          <div className="flex flex-col items-center gap-3">
             <Link
               href="/wrapped"
-              className="w-full inline-flex items-center justify-center gap-2 rounded-lg border-2 border-reach-blue/30 bg-reach-paper px-6 py-3 font-mono text-sm font-bold uppercase tracking-widest text-reach-blue shadow-sm transition-all hover:border-reach-blue hover:bg-reach-blue/5 hover:shadow-md"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-reach-blue/30 bg-reach-paper px-6 py-3 font-mono text-sm font-bold uppercase tracking-widest text-reach-blue shadow-sm transition-all hover:border-reach-blue hover:bg-reach-blue/5 hover:shadow-md"
             >
               🎁 2025 Wrapped
             </Link>
 
             <Link
               href="/explore"
-              className="font-mono text-xs text-reach-blue/60 hover:text-reach-blue hover:underline decoration-wavy underline-offset-4 uppercase tracking-widest transition-colors"
+              className="font-mono text-xs uppercase tracking-widest text-reach-blue/60 decoration-wavy underline-offset-4 transition-colors hover:text-reach-blue hover:underline"
             >
               View Leaderboard →
             </Link>
@@ -94,8 +93,8 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      <div className="w-full max-w-xs pb-4">
-        <p className="font-mono text-[10px] text-center text-reach-blue/50 tracking-wider uppercase">
+      <div className="absolute bottom-4 left-0 right-0 sm:bottom-6">
+        <p className="text-center font-mono text-[10px] uppercase tracking-wider text-reach-blue/50">
           Powered by Superfluid × Farcaster
         </p>
       </div>

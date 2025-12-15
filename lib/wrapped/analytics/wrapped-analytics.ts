@@ -17,6 +17,7 @@ import type {
   NFTBalance,
   TimeRange,
 } from "@/types/onchain-wrapped"
+import { tokenMetadataService } from "@/lib/wrapped/utils/token-metadata"
 
 export class WrappedAnalytics {
   /**
@@ -287,29 +288,29 @@ export class WrappedAnalytics {
     }
   }
 
-  computeTokenAnalytics(
+  async computeTokenAnalytics(
     transfers: TokenTransfer[],
     address: string,
     transactions?: WalletTransaction[],
-  ): TokenAnalytics {
+  ): Promise<TokenAnalytics> {
     // If no dedicated token transfers but we have transactions, try to extract token info
     let processedTransfers = transfers
     if (transfers.length === 0 && transactions) {
       // Create synthetic token transfers from transactions with token_transfer type
       const tokenTransactions = transactions.filter(
-        (tx) => tx.transactionType === "token_transfer" || tx.functionName === "token_transfer",
+        (tx) => tx.transactionType === "token_transfer" || tx.functionName === "transfer",
       )
       if (tokenTransactions.length > 0) {
         // Create a synthetic transfer for each token transaction
         processedTransfers = tokenTransactions.map((tx) => ({
-          contractAddress: "0x0000000000000000000000000000000000000000", // Unknown token
+          contractAddress: tx.to, // The contract being called is likely the token contract
           from: tx.from,
-          to: tx.to,
+          to: "0x0000000000000000000000000000000000000000", // We don't know the recipient from just tx wrapper
           value: "1", // Placeholder value since we don't know the actual amount
           timestamp: tx.timestamp,
           transactionHash: tx.hash,
-          symbol: "TOKEN", // Placeholder
-          name: "Token",
+          symbol: this.getKnownToken(tx.to).symbol || "TOKEN",
+          name: this.getKnownToken(tx.to).name || "Token",
         }))
       }
     }
@@ -330,22 +331,57 @@ export class WrappedAnalytics {
     const received = processedTransfers.filter((t) => t.to.toLowerCase() === address.toLowerCase())
     const sent = processedTransfers.filter((t) => t.from.toLowerCase() === address.toLowerCase())
 
-    // Group by token
+    // Group by token and identify unknown tokens
     const tokenData: Record<string, { count: number; volume: bigint; symbol: string; name: string }> = {}
+    const unknownTokens = new Set<string>()
 
     processedTransfers.forEach((transfer) => {
       const key = transfer.contractAddress
       if (!tokenData[key]) {
+        // Try to resolve symbol if generic "TOKEN"
+        let symbol = transfer.symbol || "TOKEN"
+        let name = transfer.name || "Token"
+        
+        if (symbol === "TOKEN" || symbol === "UNKNOWN") {
+          const known = this.getKnownToken(key)
+          if (known.symbol) {
+            symbol = known.symbol
+            name = known.name
+          } else {
+            // Mark for onchain lookup if not known
+            unknownTokens.add(key)
+          }
+        }
+
         tokenData[key] = {
           count: 0,
           volume: BigInt(0),
-          symbol: transfer.symbol || "TOKEN",
-          name: transfer.name || "Token",
+          symbol,
+          name,
         }
       }
       tokenData[key].count++
       tokenData[key].volume += BigInt(transfer.value || "0")
     })
+
+    // Fetch metadata for unknown tokens (limit to top 10 by count to save RPC calls)
+    if (unknownTokens.size > 0) {
+      const topUnknowns = Array.from(unknownTokens)
+        .sort((a, b) => (tokenData[b]?.count || 0) - (tokenData[a]?.count || 0))
+        .slice(0, 10)
+
+      await Promise.all(
+        topUnknowns.map(async (contractAddress) => {
+          const metadata = await tokenMetadataService.getMetadata(contractAddress)
+          if (metadata && metadata.symbol !== "TOKEN") {
+            if (tokenData[contractAddress]) {
+              tokenData[contractAddress].symbol = metadata.symbol
+              tokenData[contractAddress].name = metadata.name
+            }
+          }
+        })
+      )
+    }
 
     const topTokensByVolume = Object.entries(tokenData)
       .sort((a, b) => (b[1].volume > a[1].volume ? 1 : -1))
@@ -493,6 +529,24 @@ export class WrappedAnalytics {
       totalYieldEarned: "0",
       riskProfile,
     }
+  }
+
+  private getKnownToken(address: string): { symbol?: string; name?: string } {
+    const knownTokens: Record<string, { symbol: string; name: string }> = {
+      "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": { symbol: "USDC", name: "USD Coin" },
+      "0x4200000000000000000000000000000000000006": { symbol: "WETH", name: "Wrapped Ether" },
+      "0x50c5725949a6f0c72e6c4a641f24049a917db0cb": { symbol: "DAI", name: "Dai Stablecoin" },
+      "0x2ae3f1ec7f1f5012cfeab0185bfc7aa3cf0dec22": { symbol: "cbETH", name: "Coinbase Wrapped Staked ETH" },
+      "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA": { symbol: "USDbC", name: "USD Base Coin" },
+      "0x4ed4e862860bed51a957e4664a9801593f98d1c5": { symbol: "DEGEN", name: "Degen" },
+      "0x532f27101965dd16442e59d40670faf5ebb142e4": { symbol: "BRETT", name: "Brett" },
+      "0x0578d8a44db98b23bf096a382e016e29a5ce0ffe": { symbol: "HIGHER", name: "Higher" },
+      "0x160345fc359604fc6e70e3c5facbde5f7a9342d8": { symbol: "AERO", name: "Aerodrome" },
+      "0x09a3ecafa817268f77be1283176b946c4ff2e608": { symbol: "TOSHI", name: "Toshi" },
+      "0xac1bd2486aaf7b5b1f8fb6dbee94523f8ccb6054": { symbol: "KEYCAT", name: "Keyboard Cat" },
+      "0xba5dd23313c473a23631666cb9625756f915878f": { symbol: "MOCHI", name: "Mochi" },
+    }
+    return knownTokens[address.toLowerCase()] || {}
   }
 
   private getProtocolName(address: string): string {

@@ -171,7 +171,7 @@ export class GoldRushDataService implements IBlockchainDataService {
       }
 
       // Using ERC20 transfers endpoint to get all token transfers
-      const endpoint = `/${BASE_CHAIN_ID}/address/${address}/transfers_v3/`
+      const endpoint = `/${BASE_CHAIN_ID}/address/${address}/transfers_v2/`
       console.log("[GoldRush] Fetching token transfers from:", endpoint)
 
       const data = await this.fetchAPI(endpoint)
@@ -188,6 +188,8 @@ export class GoldRushDataService implements IBlockchainDataService {
           value: transfer.delta || "0",
           timestamp: new Date(transfer.block_signed_at).getTime() / 1000,
           transactionHash: transfer.tx_hash || "",
+          symbol: transfer.contract_ticker_symbol || "TOKEN",
+          name: transfer.contract_name || "Token",
         }))
 
       console.log(`[GoldRush] Fetched ${tokenTransfers.length} token transfers`)
@@ -219,7 +221,7 @@ export class GoldRushDataService implements IBlockchainDataService {
         return []
       }
 
-      const endpoint = `/${BASE_CHAIN_ID}/address/${address}/transfers_v3/`
+      const endpoint = `/${BASE_CHAIN_ID}/address/${address}/transfers_v2/`
       console.log("[GoldRush] Fetching NFT transfers from:", endpoint)
 
       const data = await this.fetchAPI(endpoint)

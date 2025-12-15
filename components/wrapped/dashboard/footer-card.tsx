@@ -3,9 +3,10 @@
 import { useState } from "react"
 import type { WrappedData } from "@/types/onchain-wrapped"
 import { Button } from "@/components/ui/button"
-import { Share2, Download, Check } from "lucide-react"
+import { Share2, Download, Check, Trophy } from "lucide-react"
 import { downloadWrappedCard, shareToTwitter, shareToFarcaster, shareToBaseApp, copyDeepLink } from "@/lib/wrapped/utils/share"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
 
 interface FooterCardProps {
   data: WrappedData
@@ -86,6 +87,16 @@ export function FooterCard({ data, address }: FooterCardProps) {
 
         {/* Action buttons with technical styling */}
         <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/wrapped/leaderboard">
+            <Button
+              variant="outline"
+              className="gap-2 border-2 border-foreground bg-transparent hover:bg-crosshatch uppercase font-bold tracking-wider transition-all duration-300 px-6 py-6"
+            >
+              <Trophy className="w-5 h-5" strokeWidth={2.5} />
+              LEADERBOARD
+            </Button>
+          </Link>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

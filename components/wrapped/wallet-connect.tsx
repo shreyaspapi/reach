@@ -6,9 +6,7 @@ import { useState } from "react"
 import { useAccount, useDisconnect } from "wagmi"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { LogOut, Loader2, ArrowLeft } from "lucide-react"
-import { useAddress } from "@coinbase/onchainkit/identity"
-import { base } from "viem/chains"
+import { LogOut, ArrowLeft, Trophy } from "lucide-react"
 import Link from "next/link"
 
 interface WalletConnectProps {
@@ -27,30 +25,16 @@ export function WalletConnect({ children, onManualAddress }: WalletConnectProps)
   const trimmedAddress = manualAddress.trim()
   const isBaseName = trimmedAddress.length > 0 && trimmedAddress.endsWith(".base.eth")
 
-  const { data: resolvedAddress, isLoading: isResolvingBaseName } = useAddress({
-    name: isBaseName && trimmedAddress ? trimmedAddress : "",
-    chain: base,
-  })
-
-  console.log("[v0] Base Name resolution:", {
-    input: trimmedAddress,
-    isBaseName,
-    resolvedAddress,
-    isLoading: isResolvingBaseName,
-  })
-
   const handleManualAddressSubmit = async () => {
     if (!trimmedAddress || isSubmitting) return
 
-    const addressToSubmit = isBaseName && resolvedAddress ? resolvedAddress : trimmedAddress
+    console.log("[v0] Submitting address:", trimmedAddress)
 
-    console.log("[v0] Submitting address:", addressToSubmit)
-
-    if (addressToSubmit && onManualAddress) {
+    if (onManualAddress) {
       setIsAnimating(true)
       setIsSubmitting(true)
       setHasSubmittedManualAddress(true)
-      onManualAddress(addressToSubmit)
+      onManualAddress(trimmedAddress)
       setTimeout(() => {
         setIsSubmitting(false)
         setIsAnimating(false)
@@ -183,31 +167,14 @@ export function WalletConnect({ children, onManualAddress }: WalletConnectProps)
                     className="h-12 sm:h-14 font-mono text-sm sm:text-base border-2 border-foreground/20 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-foreground bg-background/50 backdrop-blur uppercase placeholder:text-foreground/20 placeholder:lowercase transition-all duration-300"
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
-                    {isResolvingBaseName ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-foreground" />
-                    ) : (
-                      <div className="w-2 h-2 bg-foreground rounded-full animate-pulse" />
-                    )}
+                    <div className="w-2 h-2 bg-foreground rounded-full animate-pulse" />
                   </div>
                 </div>
-
-                {isBaseName && resolvedAddress && (
-                  <div className="px-4 py-2 bg-foreground/5 border border-foreground/10 rounded-lg">
-                    <p className="text-xs font-mono text-foreground/60 mb-1">Resolves to:</p>
-                    <p className="text-sm font-mono text-foreground">{resolvedAddress}</p>
-                  </div>
-                )}
-
-                {isBaseName && !isResolvingBaseName && !resolvedAddress && manualAddress.length > 3 && (
-                  <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-lg">
-                    <p className="text-xs font-mono text-red-500">Base Name not found</p>
-                  </div>
-                )}
 
                 <Button
                   onClick={handleManualAddressSubmit}
                   size="lg"
-                  disabled={!trimmedAddress || isSubmitting || isResolvingBaseName || (isBaseName && !resolvedAddress)}
+                  disabled={!trimmedAddress || isSubmitting}
                   className="w-full h-12 sm:h-14 text-base sm:text-lg font-black uppercase bg-foreground hover:bg-foreground/90 text-background border-2 border-foreground rounded-xl transition-all duration-300 shadow-[3px_3px_0_0_rgba(0,71,187,0.2)] hover:shadow-[5px_5px_0_0_rgba(0,71,187,0.3)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[1px_1px_0_0_rgba(0,71,187,0.2)] active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[3px_3px_0_0_rgba(0,71,187,0.2)] relative overflow-hidden group"
                 >
                   {isAnimating && (
@@ -222,11 +189,6 @@ export function WalletConnect({ children, onManualAddress }: WalletConnectProps)
                       <>
                         <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                         Processing...
-                      </>
-                    ) : isResolvingBaseName ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Resolving Base Name...
                       </>
                     ) : (
                       "Generate Onchain Wrapped"
@@ -275,6 +237,17 @@ export function WalletConnect({ children, onManualAddress }: WalletConnectProps)
           </div>
 
           <div className="flex items-center gap-2">
+            <Link href="/wrapped/leaderboard">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 h-9 sm:h-10 px-3 sm:px-4 border border-foreground/20 bg-background/50 hover:bg-foreground hover:text-background transition-all font-mono rounded-lg text-xs sm:text-sm uppercase tracking-wide"
+              >
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Leaderboard</span>
+              </Button>
+            </Link>
+
             <Link href="/">
               <Button
                 variant="outline"
