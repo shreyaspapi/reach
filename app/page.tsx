@@ -10,16 +10,6 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      {/* Docs button - fixed position */}
-      <div className="absolute right-4 top-4 sm:right-6 sm:top-6 lg:right-8 lg:top-8">
-        <Link
-          href="/docs"
-          className="inline-flex items-center gap-2 rounded-lg border-2 border-reach-blue/30 bg-reach-paper px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-reach-blue shadow-sm transition-all hover:border-reach-blue hover:bg-reach-blue/5 hover:shadow-md sm:px-4 sm:py-2"
-        >
-          📖 Docs
-        </Link>
-      </div>
-
       {/* Main content container */}
       <div className="w-full max-w-md space-y-8 sm:space-y-10">
         {/* Logo with minimal frame */}
