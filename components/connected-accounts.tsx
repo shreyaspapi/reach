@@ -108,7 +108,7 @@ export function ConnectedAccounts() {
                         <div className="flex items-center gap-2">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src="./farcaster.svg"
+                                src="/farcaster.svg"
                                 alt="Farcaster"
                                 className="w-5 h-5 rounded-sm"
                             />
