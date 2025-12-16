@@ -7,7 +7,7 @@
   "miniapp": {
     "version": "1",
     "name": "Luno",
-    "iconUrl": "https://farcaster.luno.social/favicon.ico",
+    "iconUrl": "https://farcaster.luno.social/luno-icon.png",
     "homeUrl": "https://farcaster.luno.social",
     "imageUrl": "https://farcaster.luno.social/reach-logo.png",
     "buttonTitle": "Launch Luno",
