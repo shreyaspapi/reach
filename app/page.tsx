@@ -32,7 +32,7 @@ export default function LoginPage() {
 
           {/* Brand name */}
           <div className="py-10 text-center sm:py-12">
-            <h1 className="font-display text-7xl font-extrabold tracking-tight text-reach-blue sm:text-8xl lg:text-9xl">
+            <h1 className="font-display text-9xl font-extrabold tracking-tight text-reach-blue sm:text-9xl lg:text-9xl">
               Luno
             </h1>
             <p className="mt-3 font-mono text-sm uppercase tracking-[0.3em] text-reach-blue/70 sm:text-base lg:text-lg">

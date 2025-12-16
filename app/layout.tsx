@@ -10,20 +10,37 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Luno - The Social Economy",
     description: "Get rewarded for your social engagement. Real-time token streams for every meaningful interaction.",
-    images: ["/reach-logo.png"],
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://luno.social",
+    siteName: "Luno",
+    images: [
+      {
+        url: "/reach-logo.png?v=2",
+        width: 1200,
+        height: 630,
+        alt: "Luno - The Social Economy",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Luno - The Social Economy",
+    description: "Get rewarded for your social engagement. Real-time token streams for every meaningful interaction.",
+    images: ["/reach-logo.png?v=2"],
   },
   other: {
     // Farcaster Frame metadata (v2 / Mini App)
     "fc:frame": JSON.stringify({
       version: "next",
-      imageUrl: new URL("/reach-logo.png", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
+      imageUrl: new URL("/reach-logo.png?v=2", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
       button: {
         title: "Launch Luno",
         action: {
           type: "launch_frame",
           name: "Luno",
           url: process.env.NEXT_PUBLIC_APP_URL || "https://luno.social",
-          splashImageUrl: new URL("/reach-logo.png", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
+          splashImageUrl: new URL("/reach-logo.png?v=2", process.env.NEXT_PUBLIC_APP_URL || "https://luno.social").toString(),
           splashBackgroundColor: "#F9F8F4"
         }
       }
