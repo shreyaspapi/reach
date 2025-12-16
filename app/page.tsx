@@ -44,8 +44,8 @@ export default function LoginPage() {
         {/* Value proposition */}
         <div className="space-y-4 text-center">
           <div className="flex justify-center">
-            <div className="inline-block -rotate-1 transform border-2 border-reach-blue bg-reach-blue px-4 py-1.5 text-reach-paper">
-              <span className="font-mono text-xs font-bold uppercase tracking-widest">Social Rewards</span>
+            <div className="inline-block -rotate-1 transform border-2 border-reach-blue/30 bg-reach-paper px-4 py-1.5 shadow-sm">
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-reach-blue/70">Social Rewards</span>
             </div>
           </div>
           <p className="mx-auto max-w-sm font-mono text-sm leading-relaxed text-reach-blue/90">
@@ -65,37 +65,13 @@ export default function LoginPage() {
           <div className="w-full">
             <NeynarAuth />
           </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4">
-            <span className="h-px flex-1 bg-reach-blue/20"></span>
-            <span className="font-mono text-[10px] uppercase tracking-widest text-reach-blue/50">or explore</span>
-            <span className="h-px flex-1 bg-reach-blue/20"></span>
-          </div>
-
-          {/* Secondary actions */}
-          <div className="flex flex-col items-center gap-3">
-            <Link
-              href="/wrapped"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-reach-blue/30 bg-reach-paper px-6 py-3 font-mono text-sm font-bold uppercase tracking-widest text-reach-blue shadow-sm transition-all hover:border-reach-blue hover:bg-reach-blue/5 hover:shadow-md"
-            >
-              🎁 2025 Wrapped
-            </Link>
-
-            <Link
-              href="/explore"
-              className="font-mono text-xs uppercase tracking-widest text-reach-blue/60 decoration-wavy underline-offset-4 transition-colors hover:text-reach-blue hover:underline"
-            >
-              View Leaderboard →
-            </Link>
-          </div>
         </div>
       </div>
 
       {/* Footer */}
       <div className="absolute bottom-4 left-0 right-0 sm:bottom-6">
         <p className="text-center font-mono text-[10px] uppercase tracking-wider text-reach-blue/50">
-          Powered by Superfluid × Farcaster
+          Superfluid × Farcaster × Base
         </p>
       </div>
     </main>

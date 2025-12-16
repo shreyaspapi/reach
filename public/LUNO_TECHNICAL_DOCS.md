@@ -1,4 +1,4 @@
-# Luno Protocol: Technical Documentation v1.1
+# Luno Protocol: Technical Documentation v1.2
 
 ## 1. System Overview
 
@@ -10,15 +10,15 @@ The system operates on a four-tier architecture:
 
 1.  **Ingestion Layer (Social)**: Captures user interactions via Farcaster protocol.
 
-2.  **Processing Layer (Compute)**: Analyzes semantic quality using dual-engine evaluation (LLM + Heuristic).
+2.  **Processing Layer (Compute)**: Analyzes semantic quality using rule-based heuristics with optional LLM enhancement.
 
 3.  **State Layer (Data)**: Persists user reputation and triggers financial state updates.
 
-4.  **Distribution Layer (Finance)**: Executes real-time reward streaming on Ethereum Sepolia.
+4.  **Distribution Layer (Finance)**: Executes real-time reward streaming on Ethereum Sepolia testnet.
 
 ## 3. Engagement Scoring Engine
 
-The scoring logic (`lib/scoring.ts`, `lib/llm-scoring.ts`) employs a primary **LLM-based evaluation** (Azure OpenAI GPT-4) with a deterministic **Rule-based fallback**.
+The scoring logic (`lib/scoring.ts`, `lib/llm-scoring.ts`) employs a primary **rule-based heuristic system** with an optional **LLM enhancement** (Azure OpenAI GPT-4o) when configured. The system gracefully falls back to deterministic scoring if LLM services are unavailable.
 
 ### 3.1. Scoring Dimensions
 
@@ -35,33 +35,33 @@ The Total Engagement Score (0-100) is a weighted aggregate:
 
 1.  **Extraction:** Event text and metadata extracted from Neynar webhook.
 
-2.  **Evaluation:** GPT-4 analyzes semantic depth; heuristic engine validates against spam patterns.
+2.  **Evaluation:** Rule-based heuristic engine analyzes content quality, engagement metrics, and spam patterns. Optional GPT-4o enhancement provides semantic depth analysis when Azure OpenAI is configured.
 
-3.  **Normalization:** Scores clamped 0-100 and weighted.
+3.  **Normalization:** Scores clamped 0-100 and weighted according to dimension importance.
 
-4.  **Persistence:** Score recorded in `casts` table; aggregates updated in `user_stats`.
+4.  **Persistence:** Score recorded in `casts` table; aggregates updated in `user_stats` via PostgreSQL triggers.
 
 ## 4. Technical Stack & Deployments
 
 ### 4.1. Core Infrastructure
 
-* **Frontend**: Next.js 15 (App Router), TypeScript.
+* **Frontend**: Next.js 15 (App Router), TypeScript, React 19.
 
-* **Auth**: Privy (Farcaster OAuth).
+* **Auth**: Neynar (Farcaster OAuth & Social Graph).
 
-* **Intelligence**: Azure OpenAI (`gpt-4o`).
+* **Intelligence**: Azure OpenAI (`gpt-4o`) - optional enhancement.
 
-* **Database**: Supabase (PostgreSQL).
+* **Database**: Supabase (PostgreSQL with real-time subscriptions).
 
-### 4.2. Smart Contract Deployments (Sepolia)
+### 4.2. Smart Contract Deployments (Ethereum Sepolia Testnet)
 
-The protocol utilizes the Superfluid stack for continuous distribution.
+The protocol utilizes the Superfluid stack for continuous distribution on Ethereum Sepolia testnet.
 
-* **LUNO Supertoken**: `0xE58C945fbb1f2c5e7398f1a4b9538f52778b31a7` (ERC-20 Superfluid Wrapper)
+* **LUNO/REACH Supertoken**: `0xE58C945fbb1f2c5e7398f1a4b9538f52778b31a7` (ERC-20 Superfluid Wrapper)
 
-* **GDA Pool Contract**: `0x2cc199976B4ACBe4211E943c1E7F070d76570D4e` (General Distribution Agreement)
+* **GDA Pool Contract**: `0x2cc199976B4ACBe4211E943c1E7F070d76570D4e` (General Distribution Agreement Pool)
 
-* **GDA Forwarder**: `0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08`
+* **GDA Forwarder**: `0x6DA13Bde224A05a288748d857b9e7DDEffd1dE08` (Batch Operations Contract)
 
 ## 5. Data Schema & State Transitions
 
@@ -97,13 +97,15 @@ EXECUTE FUNCTION update_user_stats();
 
 4.  This `gda_units` value determines the user's share of the Superfluid GDA Pool, effectively adjusting their token stream rate in real-time.
 
-## 6. Security
+## 6. Security & Infrastructure
 
-  * **Webhook Validation**: HMAC signature verification prevents replay attacks on the ingestion layer.
+  * **Webhook Validation**: HMAC signature verification (Neynar webhook secret) prevents replay attacks on the ingestion layer.
 
-  * **Sybil Resistance**: Heuristic filters (regex matching on "farming" keywords) apply negative score weights (-30) to low-effort consensus spam.
+  * **Sybil Resistance**: Multi-layered heuristic filters detect farming patterns (e.g., "gm", "ser", "wagmi" spam) and apply negative score weights (-30) to low-effort content.
 
-  * **Row Level Security (RLS)**: Database policies restrict write access to the service role, preventing client-side score manipulation.
+  * **Row Level Security (RLS)**: Supabase database policies restrict write access to the service role, preventing client-side score manipulation.
+
+  * **Network**: Currently deployed on Ethereum Sepolia testnet. Production deployment targets Base network for lower fees and faster finality.
 
 ## 7. Team
 

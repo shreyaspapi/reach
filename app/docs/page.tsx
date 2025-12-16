@@ -22,7 +22,7 @@ export default function DocsPage() {
     let html = markdown
       // Code blocks first (before other processing)
       .replace(/```([\s\S]*?)```/gim, (match, code) => {
-        return `<pre class="bg-reach-blue/10 border-2 border-reach-blue p-4 rounded my-4 overflow-x-auto"><code class="font-mono text-sm whitespace-pre">${code.trim()}</code></pre>`
+        return `<pre class="bg-reach-blue/10 border-2 border-reach-blue p-4 rounded my-4 overflow-x-auto max-w-full"><code class="font-mono text-xs sm:text-sm whitespace-pre block">${code.trim()}</code></pre>`
       })
       // Inline code
       .replace(/`([^`]+)`/gim, '<code class="bg-reach-blue/10 px-1.5 py-0.5 rounded font-mono text-sm">$1</code>')
@@ -60,20 +60,20 @@ export default function DocsPage() {
       } else if (!isTableRow && inTable) {
         // End of table, render it
         if (tableRows.length > 0) {
-          processedLines.push('<table class="w-full border-collapse border-2 border-reach-blue my-6">')
+          processedLines.push('<div class="overflow-x-auto my-6"><table class="w-full min-w-full border-collapse border-2 border-reach-blue">')
           tableRows.forEach((row, idx) => {
             const cells = row.split('|').filter(c => c.trim())
             const tag = idx === 0 ? 'th' : 'td'
             const cellClass = idx === 0 
-              ? 'border border-reach-blue bg-reach-blue/20 px-4 py-3 font-bold text-left'
-              : 'border border-reach-blue/30 px-4 py-2'
+              ? 'border border-reach-blue bg-reach-blue/20 px-3 py-2 sm:px-4 sm:py-3 font-bold text-left text-xs sm:text-sm'
+              : 'border border-reach-blue/30 px-3 py-2 sm:px-4 text-xs sm:text-sm'
             processedLines.push(`<tr>`)
             cells.forEach(cell => {
               processedLines.push(`<${tag} class="${cellClass}">${cell.trim()}</${tag}>`)
             })
             processedLines.push(`</tr>`)
           })
-          processedLines.push('</table>')
+          processedLines.push('</table></div>')
         }
         inTable = false
         tableRows = []
@@ -85,20 +85,20 @@ export default function DocsPage() {
 
     // Handle remaining table if file ends with table
     if (inTable && tableRows.length > 0) {
-      processedLines.push('<table class="w-full border-collapse border-2 border-reach-blue my-6">')
+      processedLines.push('<div class="overflow-x-auto my-6"><table class="w-full min-w-full border-collapse border-2 border-reach-blue">')
       tableRows.forEach((row, idx) => {
         const cells = row.split('|').filter(c => c.trim())
         const tag = idx === 0 ? 'th' : 'td'
         const cellClass = idx === 0 
-          ? 'border border-reach-blue bg-reach-blue/20 px-4 py-3 font-bold text-left'
-          : 'border border-reach-blue/30 px-4 py-2'
+          ? 'border border-reach-blue bg-reach-blue/20 px-3 py-2 sm:px-4 sm:py-3 font-bold text-left text-xs sm:text-sm'
+          : 'border border-reach-blue/30 px-3 py-2 sm:px-4 text-xs sm:text-sm'
         processedLines.push(`<tr>`)
         cells.forEach(cell => {
           processedLines.push(`<${tag} class="${cellClass}">${cell.trim()}</${tag}>`)
         })
         processedLines.push(`</tr>`)
       })
-      processedLines.push('</table>')
+      processedLines.push('</table></div>')
     }
 
     html = processedLines.join('\n')
@@ -142,26 +142,26 @@ export default function DocsPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 pb-10 pt-14 md:pt-20 safe-area-inset">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between pt-6">
+        <div className="mb-8 flex items-center justify-between gap-4">
           <Link 
             href="/"
-            className="font-mono text-sm text-reach-blue/70 hover:text-reach-blue transition-colors uppercase tracking-widest"
+            className="font-mono text-sm text-reach-blue/70 hover:text-reach-blue transition-colors uppercase tracking-widest flex-shrink-0"
           >
             ← Back
           </Link>
-          <div className="inline-block border-2 border-reach-blue px-5 py-2 bg-reach-blue text-reach-paper transform -rotate-1">
+          <div className="inline-block border-2 border-reach-blue px-4 py-2 bg-reach-blue text-reach-paper transform -rotate-1 flex-shrink-0">
             <span className="font-mono text-xs font-bold tracking-widest uppercase">Technical Docs</span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="bg-reach-paper/50 border-2 border-reach-blue p-8 rounded-lg">
+        <div className="bg-reach-paper/50 border-2 border-reach-blue p-6 sm:p-8 md:p-10 lg:p-12 rounded-lg overflow-hidden">
           {docsContent ? (
             <div 
-              className="prose prose-blue max-w-none"
+              className="prose prose-blue max-w-none overflow-x-auto"
               dangerouslySetInnerHTML={renderMarkdown(docsContent)}
             />
           ) : (
@@ -172,9 +172,9 @@ export default function DocsPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-center">
+        <div className="mt-8 mb-4 text-center">
           <p className="font-mono text-xs text-reach-blue/50 tracking-wider uppercase">
-            Luno Protocol v1.1
+            Luno Protocol v1.2
           </p>
         </div>
       </div>
