@@ -78,3 +78,4 @@ NEXT_PUBLIC_ONCHAINKIT_API_KEY=your_actual_api_key_here
 - OnchainKit Documentation: https://docs.base.org/onchainkit
 - Coinbase Developer Platform: https://portal.cdp.coinbase.com/
 - Base Names Guide: https://docs.base.org/base-names
+

@@ -281,3 +281,4 @@ export function WalletConnect({ children, onManualAddress }: WalletConnectProps)
     </>
   )
 }
+
