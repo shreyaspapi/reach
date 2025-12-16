@@ -102,13 +102,16 @@ export default function ExplorePage() {
                 {/* Leaderboard Table */}
                 <div className="max-w-4xl mx-auto w-full bg-white/40 backdrop-blur-sm border-double-thick border-reach-blue relative guide-corners min-h-[400px]">
 
-                    {/* Table Header */}
-                    <div className="grid grid-cols-12 gap-4 p-4 border-b-2 border-reach-blue bg-reach-blue/5 font-mono text-xs font-bold tracking-widest text-reach-blue/70">
-                        <div className="col-span-1 text-center">#</div>
-                        <div className="col-span-5">User</div>
-                        <div className="col-span-2 text-right">Avg Score</div>
-                        <div className="col-span-2 text-right">Total Score</div>
-                        <div className="col-span-2 text-right">GDA Units</div>
+                    {/* Table Header - Responsive columns */}
+                    <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_auto_auto_auto] gap-2 sm:gap-4 px-2 sm:px-4 py-3 sm:py-4 border-b-2 border-reach-blue bg-reach-blue/5 font-mono text-[10px] sm:text-xs font-bold tracking-widest text-reach-blue/70">
+                        <div className="text-center">#</div>
+                        <div>User</div>
+                        <div className="text-right">
+                            <div className="hidden sm:block">Avg Score</div>
+                            <div className="sm:hidden">Avg</div>
+                        </div>
+                        <div className="hidden sm:block text-right">Total</div>
+                        <div className="hidden sm:block text-right">Units</div>
                     </div>
 
                     {/* Table Body */}
@@ -128,41 +131,57 @@ export default function ExplorePage() {
                                 <Link
                                     href={`/u/${entry.users.username}`}
                                     key={entry.fid}
-                                    className="grid grid-cols-12 gap-4 p-4 hover:bg-reach-blue/5 transition-colors group items-center"
+                                    className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_auto_auto_auto] gap-2 sm:gap-4 px-2 sm:px-4 py-3 sm:py-4 hover:bg-reach-blue/5 transition-colors group items-center"
                                 >
-                                    <div className="col-span-1 text-center font-display text-xl font-bold text-reach-blue/50 group-hover:text-reach-blue">
+                                    {/* Rank */}
+                                    <div className="text-center font-display text-lg sm:text-xl font-bold text-reach-blue/50 group-hover:text-reach-blue w-8 sm:w-10">
                                         {index + 1}
                                     </div>
-                                    <div className="col-span-5 flex items-center gap-3">
+                                    
+                                    {/* User info */}
+                                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                                         {entry.users.pfp_url ? (
                                             // eslint-disable-next-line @next/next/no-img-element
-                                            <img src={entry.users.pfp_url} alt={entry.users.username} className="w-10 h-10 rounded-full border border-reach-blue/20 bg-reach-paper" />
+                                            <img 
+                                                src={entry.users.pfp_url} 
+                                                alt={entry.users.username} 
+                                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-reach-blue/20 bg-reach-paper shrink-0" 
+                                            />
                                         ) : (
-                                            <div className="w-10 h-10 rounded-full border border-reach-blue/20 bg-reach-blue/10 flex items-center justify-center">
-                                                <span className="font-display text-lg text-reach-blue">{entry.users.username[0].toUpperCase()}</span>
+                                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-reach-blue/20 bg-reach-blue/10 flex items-center justify-center shrink-0">
+                                                <span className="font-display text-sm sm:text-lg text-reach-blue">{entry.users.username[0].toUpperCase()}</span>
                                             </div>
                                         )}
-                                        <div>
+                                        <div className="min-w-0">
                                             <div className="flex items-center gap-1">
-                                                <p className="font-bold text-reach-blue leading-none">{entry.users.display_name || entry.users.username}</p>
-                                                {entry.users.power_badge && <Trophy className="w-3 h-3 text-yellow-600 fill-yellow-400" />}
+                                                <p className="font-bold text-reach-blue leading-none text-sm sm:text-base truncate">{entry.users.display_name || entry.users.username}</p>
+                                                {entry.users.power_badge && <Trophy className="w-3 h-3 text-yellow-600 fill-yellow-400 shrink-0" />}
                                             </div>
-                                            <p className="font-mono text-xs text-reach-blue/60">@{entry.users.username}</p>
+                                            <p className="font-mono text-[10px] sm:text-xs text-reach-blue/60 truncate">@{entry.users.username}</p>
                                         </div>
                                     </div>
-                                    <div className="col-span-2 text-right">
-                                        <div className="inline-block bg-white border border-reach-blue/20 px-2 py-1">
-                                            <span className="font-mono font-bold text-reach-blue">{entry.average_score.toFixed(1)}</span>
+                                    
+                                    {/* Avg Score - always visible */}
+                                    <div className="text-right">
+                                        <div className="inline-block bg-white border border-reach-blue/20 px-1.5 sm:px-2 py-0.5 sm:py-1">
+                                            <span className="font-mono font-bold text-reach-blue text-xs sm:text-sm">{entry.average_score.toFixed(1)}</span>
+                                        </div>
+                                        {/* Show Total & Units stacked on mobile */}
+                                        <div className="sm:hidden mt-1 space-y-0.5">
+                                            <p className="font-mono text-[10px] text-reach-blue/60">T: {entry.total_score.toFixed(0)}</p>
+                                            <p className="font-mono text-[10px] text-reach-blue/60">U: {Math.round(entry.gda_units || entry.total_score)}</p>
                                         </div>
                                     </div>
-                                    <div className="col-span-2 text-right">
+                                    
+                                    {/* Total Score - hidden on mobile */}
+                                    <div className="hidden sm:block text-right">
                                         <p className="font-mono text-sm text-reach-blue/80">{entry.total_score.toFixed(0)}</p>
                                     </div>
-                                    <div className="col-span-2 text-right">
-                                        <div className="flex items-center justify-end gap-1 text-reach-blue font-bold">
-                                            <span>{Math.round(entry.gda_units || entry.total_score)}</span>
-                                            <TrendingUp className="w-3 h-3 opacity-50" />
-                                        </div>
+                                    
+                                    {/* GDA Units - hidden on mobile */}
+                                    <div className="hidden sm:flex items-center justify-end gap-1 text-reach-blue font-bold">
+                                        <span className="text-sm">{Math.round(entry.gda_units || entry.total_score)}</span>
+                                        <TrendingUp className="w-3 h-3 opacity-50" />
                                     </div>
                                 </Link>
                             ))}
